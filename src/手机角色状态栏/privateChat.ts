@@ -206,9 +206,7 @@ async function request_npc_reply(thread: ChatMessage[], ctx: PrivateChatContext)
     max_chat_history: 0,
     should_silence: true,
     overrides: PRIVATE_CHAT_RAW_OVERRIDES,
-    custom_api: {
-      max_tokens: 512,
-    },
+    // 勿传仅含 max_tokens 的 custom_api，否则会覆盖当前 API 连接且 model 为空导致 400
   });
 
   const replies = parse_npc_replies(raw, npc_name);
