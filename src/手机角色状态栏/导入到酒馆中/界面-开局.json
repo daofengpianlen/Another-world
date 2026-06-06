@@ -1,0 +1,15 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "scriptName": "[界面]手机角色状态栏-开局",
+  "findRegex": "^\\s*开局\\s*$",
+  "replaceString": "```\n<body>\n<script>\n(function () {\n  var url = 'http://127.0.0.1:5500/dist/手机角色状态栏/界面/GAL/index.html';\n  $('body').load(url, function (_response, status) {\n    if (status === 'error') {\n      document.body.innerHTML =\n        '<div style=\"padding:12px;color:#f87171;font-size:14px;\">' +\n        '界面加载失败。请确认 Live Server 已打开项目根目录，且能访问：<br>' + url + '</div>';\n    }\n  });\n})();\n</script>\n</body>\n```",
+  "trimStrings": [],
+  "placement": [1, 2],
+  "disabled": true,
+  "markdownOnly": true,
+  "promptOnly": false,
+  "runOnEdit": true,
+  "substituteRegex": 0,
+  "minDepth": null,
+  "maxDepth": null
+}

@@ -1,0 +1,7 @@
+{
+  "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  "name": "手机角色状态栏-变量结构",
+  "content": "import 'http://127.0.0.1:5500/dist/手机角色状态栏/脚本/变量结构/index.js'",
+  "info": "注册 MVU 变量结构，需与 MVU 框架脚本一同启用",
+  "buttons": []
+}

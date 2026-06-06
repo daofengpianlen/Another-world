@@ -1,0 +1,89 @@
+---
+变量输出格式:
+  rule:
+    - you must output the update analysis and the actual update commands at once in the end of the next reply
+    - the update commands works like the **JSON Patch (RFC 6902)** standard, must be a valid JSON array containing operation objects, but supports the following operations instead:
+      - replace: replace the value of existing paths
+      - delta: update the value of existing number paths by a delta value
+      - insert: insert new items into an object or array (using `-` as array index intends appending to the end)
+      - remove
+      - move
+    - don't update field names starts with `_` as they are readonly, such as `_变量`
+    - JSONPatch paths must match stat_data structure: /主角/*, /背包/{物品名}/*, /邂逅名录/{NPC名}/*, /已解锁CG/{角色名}
+    - do NOT include 头像 in 邂逅名录 entries; avatars are resolved by NPC name in the frontend
+    - every assistant reply that changes game state MUST include <UpdateVariable>; skipping it breaks the UI
+  format: |-
+    <UpdateVariable>
+    <Analysis>$(IN ENGLISH, no more than 80 words)
+    - ${calculate time passed: ...}
+    - ${decide whether dramatic updates are allowed as it's in a special case or the time passed is more than usual: yes/no}
+    - ${analyze every variable based on its corresponding `check`, according only to current reply instead of previous plots: ...}
+    </Analysis>
+    <JSONPatch>
+    [
+      { "op": "replace", "path": "${/path/to/variable}", "value": "${new_value}" },
+      { "op": "delta", "path": "${/path/to/number/variable}", "value": "${positive_or_negative_delta}" },
+      { "op": "insert", "path": "${/path/to/object/new_key}", "value": "${new_value}" },
+      { "op": "insert", "path": "${/path/to/array/-}", "value": "${new_value}" },
+      { "op": "remove", "path": "${/path/to/object/key}" },
+      { "op": "remove", "path": "${/path/to/array/0}" },
+      { "op": "move", "from": "${/path/to/variable}", "to": "${/path/to/another/path}" },
+      ...
+    ]
+    </JSONPatch>
+    </UpdateVariable>
+  example: |-
+    <UpdateVariable>
+    <Analysis>EN: First meeting with Iolos; full NPC profile inserted with structured appearance, clothing, sex profile, physiology, and memorable events.</Analysis>
+    <JSONPatch>
+    [
+      { "op": "insert", "path": "/邂逅名录/伊洛丝", "value": {
+        "性别": "女",
+        "身份": "圣光教会圣女",
+        "等级": 5,
+        "能力": { "生命": 100, "力量": 12, "体魄": 10, "智慧": 22 },
+        "外貌穿着": "",
+        "内心想法": "……请问，您叫什么名字？",
+        "位置": "圣光教会圣地·召唤祭坛",
+        "好感度": 35,
+        "性欲": 80,
+        "近期性经历": "",
+        "外观特征": {
+          "身高": "163cm",
+          "体型": "丰满匀称",
+          "发色": "粉色",
+          "发型": "长发",
+          "瞳色": "水晶色"
+        },
+        "当前服装": {
+          "上装": "无",
+          "下装": "无",
+          "内衣": "无",
+          "内裤": "无",
+          "袜子": "无",
+          "鞋子": "无"
+        },
+        "性经验档案": {
+          "处女": "否",
+          "性交次数": 999,
+          "性伴侣数": 1,
+          "初次对象": "user",
+          "后庭经验": "有",
+          "口交经验": "有"
+        },
+        "生理状态": {
+          "阴道润滑": "湿润",
+          "乳头状态": "微挺",
+          "阴蒂状态": "敏感",
+          "子宫状态": "排卵期",
+          "怀孕状态": "未怀孕"
+        },
+        "互动记录": {
+          "难忘事件": [
+            "将user推入现实世界，并在一旁隐身陪伴。"
+          ]
+        }
+      }}
+    ]
+    </JSONPatch>
+    </UpdateVariable>
