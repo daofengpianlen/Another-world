@@ -27,6 +27,7 @@
 
 <script setup lang="ts">
 import { GAME_TITLE } from '../config';
+import { readCurrentAudioPlaying, toggleTavernAudio } from '../tavernAudio';
 import { useGalStore } from '../store';
 
 defineProps<{
@@ -38,7 +39,7 @@ defineEmits<{
 }>();
 
 const gal = useGalStore();
-const playing = ref(getCurrentAudio('bgm').playing);
+const playing = ref(readCurrentAudioPlaying('bgm'));
 
 const bgm_label = computed(() => {
   if (!gal.current_bgm) return '暂无 BGM';
@@ -50,19 +51,11 @@ const bgm_label = computed(() => {
 });
 
 useIntervalFn(() => {
-  playing.value = getCurrentAudio('bgm').playing;
+  playing.value = readCurrentAudioPlaying('bgm');
 }, 1000);
 
 function toggleBgm() {
-  if (getCurrentAudio('bgm').playing) {
-    pauseAudio('bgm');
-    playing.value = false;
-    return;
-  }
-  if (gal.current_bgm) {
-    playAudio('bgm', { url: gal.current_bgm });
-    playing.value = true;
-  }
+  playing.value = toggleTavernAudio('bgm', gal.current_bgm || undefined);
 }
 </script>
 

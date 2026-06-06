@@ -1,7 +1,7 @@
 import { merge_hero_avatar_into_mvu_data, merge_hero_avatar_into_stat_data } from './heroAvatar';
 import { parseGalFromMessage } from './galParser';
 import { hasGalBlock } from './messageScope';
-import { Schema } from './schema';
+import { Schema, parseStatData } from './schema';
 
 export const OPENING_TITLE = '异世界大冒险';
 export const OPENING_FLOOR_ID = 0;
@@ -160,7 +160,7 @@ export function resolveGameplayMvuBaseline(): Mvu.MvuData {
 export async function persistHeroStatBeforeSend(hero: ReturnType<typeof Schema.parse>['主角']): Promise<number> {
   const baseline_id = resolveGameplayMvuMessageId();
   const old_data = Mvu.getMvuData({ type: 'message', message_id: baseline_id }) ?? {};
-  const stat_data = Schema.parse({
+  const stat_data = parseStatData({
     ..._.get(old_data, 'stat_data', {}),
     主角: klona(hero),
   });
@@ -198,7 +198,7 @@ export async function persistProtagonist(form: ProtagonistCreation): Promise<voi
   const f = trimForm(form);
   const message_id = OPENING_FLOOR_ID;
   const old_data = Mvu.getMvuData({ type: 'message', message_id }) ?? {};
-  const stat_data = Schema.parse({
+  const stat_data = parseStatData({
     ..._.get(old_data, 'stat_data', {}),
     主角: {
       ..._.get(old_data, 'stat_data.主角', {}),

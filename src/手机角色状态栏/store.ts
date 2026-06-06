@@ -24,7 +24,7 @@ import {
 } from './galParser';
 import { isOpeningFloor, useMessageScope } from './messageScope';
 import { merge_hero_avatar_into_stat_data } from './heroAvatar';
-import { Schema } from './schema';
+import { Schema, parseStatData } from './schema';
 import { useStatChangeStore } from './statChangeStore';
 import { write_current_region } from './regionState';
 import {
@@ -96,14 +96,16 @@ export const useDataStore = defineStore('phone_character_mvu', () => {
   function syncFromVariables() {
     const target_id = resolveMvuMessageId();
     const stat_data = readStatData(target_id);
-    const result = Schema.safeParse(stat_data);
-    if (result.success) {
-      const merged = merge_hero_avatar_into_stat_data(result.data);
+    try {
+      const merged = merge_hero_avatar_into_stat_data(parseStatData(stat_data));
       useStatChangeStore().ingest(merged);
       data.value = merged;
-      return;
+    } catch (error) {
+      console.warn('[MVU] stat_data 解析失败', {
+        target_id,
+        error: error instanceof z.ZodError ? z.prettifyError(error) : error,
+      });
     }
-    console.warn('[MVU] stat_data 解析失败', { target_id, error: z.prettifyError(result.error) });
   }
 
   syncFromVariables();

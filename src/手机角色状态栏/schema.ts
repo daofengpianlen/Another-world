@@ -130,3 +130,12 @@ export const Schema = z
   .prefault({});
 
 export type Schema = z.output<typeof Schema>;
+
+/** 将 MVU stat_data 与默认值深度合并后再解析，避免部分字段缺失导致 Zod 报错 */
+export function parseStatData(raw: unknown): Schema {
+  const base = Schema.parse({});
+  const merged = _.mergeWith({}, base, raw && typeof raw === 'object' ? raw : {}, (obj, src) =>
+    src === undefined ? obj : undefined,
+  );
+  return Schema.parse(merged);
+}
