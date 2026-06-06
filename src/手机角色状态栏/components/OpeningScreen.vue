@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 import { OPENING_TITLE, startGame, type ProtagonistCreation } from '../gameFlow';
-import { useDataStore, useGalStore, useGamePhaseStore } from '../store';
+import { syncDataFromMvu, useGalStore, useGamePhaseStore } from '../store';
 
 const form = ref<ProtagonistCreation>({
   姓名: '',
@@ -89,7 +89,7 @@ async function submit() {
   try {
     await startGame(form.value);
     gal.refreshFromGameplayMessage();
-    useDataStore().syncFromVariables();
+    syncDataFromMvu();
     toastr.success('冒险开始！');
   } catch (err) {
     phase.revertToOpening();

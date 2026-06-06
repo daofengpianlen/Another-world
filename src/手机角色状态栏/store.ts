@@ -119,6 +119,13 @@ export const useDataStore = defineStore('phone_character_mvu', () => {
   });
 
   watch(
+    () => useGamePhaseStore().phase,
+    (next, prev) => {
+      if (next === 'playing' && prev === 'opening') syncFromVariables();
+    },
+  );
+
+  watch(
     data,
     new_data => {
       const result = Schema.safeParse(new_data);
@@ -138,6 +145,14 @@ export const useDataStore = defineStore('phone_character_mvu', () => {
 
   return { data, syncFromVariables };
 });
+
+/** 从 MVU 楼层变量同步 stat_data；兼容旧 bundle 未导出 syncFromVariables 的情况 */
+export function syncDataFromMvu() {
+  const store = useDataStore();
+  if (typeof store.syncFromVariables === 'function') {
+    store.syncFromVariables();
+  }
+}
 
 export interface ChatMessage {
   id: string;
@@ -490,6 +505,7 @@ export const useGalStore = defineStore('gal_playback', () => {
 
   function refreshFromGameplayMessage() {
     loadFromGameplayMessage();
+    syncDataFromMvu();
   }
 
   function applyMediaState() {
