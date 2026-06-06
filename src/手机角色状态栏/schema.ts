@@ -70,6 +70,23 @@ function migrate_raw_npc(raw: Record<string, unknown>): Record<string, unknown> 
   return out;
 }
 
+const DEFAULT_HERO = {
+  头像: '',
+  姓名: '旅人',
+  性别: '未知',
+  性格: '',
+  外貌: '',
+  身份: '冒险者',
+  等级: 1,
+  经验: 0,
+  金币: 0,
+  能力: migrate_raw_ability({}),
+} as const;
+
+function default_hero() {
+  return { ...DEFAULT_HERO, 能力: migrate_raw_ability({}) };
+}
+
 const NpcCoreSchema = z.object({
   性别: z.string().prefault('未知'),
   身份: z.string().prefault(''),
@@ -111,7 +128,7 @@ export const Schema = z
         金币: z.coerce.number().transform(v => _.clamp(v, 0, 9999999)).prefault(0),
         能力: AbilitySchema,
       })
-      .prefault({}),
+      .prefault(default_hero),
     背包: z
       .record(
         z.string().describe('物品名'),
@@ -131,32 +148,24 @@ export const Schema = z
 
 export type Schema = z.output<typeof Schema>;
 
-const DEFAULT_HERO = {
-  头像: '',
-  姓名: '旅人',
-  性别: '未知',
-  性格: '',
-  外貌: '',
-  身份: '冒险者',
-  等级: 1,
-  经验: 0,
-  金币: 0,
-  能力: migrate_raw_ability({}),
-} as const;
-
 /** 将 MVU stat_data 与默认值深度合并后再解析，避免部分字段缺失导致 Zod 报错 */
 export function parseStatData(raw: unknown): Schema {
-  const base = Schema.parse({ 主角: { ...DEFAULT_HERO } });
+  const base = Schema.parse({ 主角: default_hero() });
   const merged = _.mergeWith({}, base, raw && typeof raw === 'object' ? raw : {}, (obj, src) =>
     src === undefined ? obj : undefined,
   );
   const hero_raw = merged.主角 && typeof merged.主角 === 'object' ? merged.主角 : {};
   merged.主角 = {
-    ...DEFAULT_HERO,
+    ...default_hero(),
     ...hero_raw,
     能力: migrate_raw_ability(
       (hero_raw.能力 && typeof hero_raw.能力 === 'object' ? hero_raw.能力 : {}) as Record<string, unknown>,
     ),
   };
   return Schema.parse(merged);
+}
+
+/** 空 stat_data 的安全默认值（供 store 初始化） */
+export function emptyStatData(): Schema {
+  return parseStatData({});
 }

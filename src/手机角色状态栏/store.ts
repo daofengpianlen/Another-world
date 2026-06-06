@@ -24,7 +24,7 @@ import {
 } from './galParser';
 import { isOpeningFloor, useMessageScope } from './messageScope';
 import { merge_hero_avatar_into_stat_data } from './heroAvatar';
-import { Schema, parseStatData } from './schema';
+import { Schema, emptyStatData, parseStatData } from './schema';
 import { useStatChangeStore } from './statChangeStore';
 import { write_current_region } from './regionState';
 import {
@@ -73,7 +73,7 @@ export const useGamePhaseStore = defineStore('game_phase', () => {
 
 export const useDataStore = defineStore('phone_character_mvu', () => {
   const { message_id } = useMessageScope();
-  const data = ref(Schema.parse({})) as Ref<Schema>;
+  const data = ref(emptyStatData()) as Ref<Schema>;
 
   function resolveMvuMessageId(): number | 'latest' {
     const phase = useGamePhaseStore();
