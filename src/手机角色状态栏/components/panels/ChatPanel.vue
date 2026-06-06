@@ -43,6 +43,8 @@
         <div v-if="msg.role === 'user'" class="chat-message__user-col">
           <div v-if="editing_id === msg.id" class="chat-message__edit-wrap">
             <textarea
+              :id="`chat-edit-${msg.id}`"
+              name="chat_edit"
               ref="edit_textarea_ref"
               v-model="edit_draft"
               class="chat-message__edit-input"
@@ -127,6 +129,8 @@
     <footer class="chat-panel__composer">
       <div class="chat-panel__input-wrap">
         <input
+          id="chat-composer-input"
+          name="chat_message"
           v-model="draft"
           class="chat-panel__input"
           type="text"

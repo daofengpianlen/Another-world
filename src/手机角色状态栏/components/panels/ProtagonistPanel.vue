@@ -4,7 +4,7 @@
         <label class="avatar-upload">
           <img v-if="avatar_src" :src="avatar_src" alt="主角头像" />
           <div v-else class="avatar-upload__placeholder">{{ initial }}</div>
-          <input type="file" accept="image/*" hidden @change="onUpload" />
+          <input id="protagonist-avatar-upload" name="avatar" type="file" accept="image/*" hidden @change="onUpload" />
           <span class="avatar-upload__hint"><i class="fa-solid fa-camera"></i></span>
         </label>
         <div class="protagonist-panel__info">

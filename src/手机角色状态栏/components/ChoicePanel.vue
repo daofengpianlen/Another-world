@@ -23,6 +23,8 @@
     <div v-else-if="show_free_input" class="input-panel__row">
       <div class="input-panel__wrap">
         <input
+          id="gal-user-input"
+          name="user_input"
           v-model="gal.user_input"
           class="input-panel__input"
           type="text"

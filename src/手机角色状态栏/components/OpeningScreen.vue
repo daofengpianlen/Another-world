@@ -17,6 +17,8 @@
           <span class="opening-field__label">{{ field.label }}</span>
           <textarea
             v-if="field.multiline"
+            :id="`opening-${field.key}`"
+            :name="field.key"
             v-model="form[field.key]"
             class="opening-field__input opening-field__textarea"
             :placeholder="field.placeholder"
@@ -26,6 +28,8 @@
           />
           <input
             v-else
+            :id="`opening-${field.key}`"
+            :name="field.key"
             v-model="form[field.key]"
             class="opening-field__input"
             type="text"

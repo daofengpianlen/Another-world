@@ -1,4 +1,4 @@
-import { AbilitySchema } from './ability';
+import { AbilitySchema, migrate_raw_ability } from './ability';
 
 const NpcAppearanceSchema = z
   .object({
@@ -131,11 +131,32 @@ export const Schema = z
 
 export type Schema = z.output<typeof Schema>;
 
+const DEFAULT_HERO = {
+  头像: '',
+  姓名: '旅人',
+  性别: '未知',
+  性格: '',
+  外貌: '',
+  身份: '冒险者',
+  等级: 1,
+  经验: 0,
+  金币: 0,
+  能力: migrate_raw_ability({}),
+} as const;
+
 /** 将 MVU stat_data 与默认值深度合并后再解析，避免部分字段缺失导致 Zod 报错 */
 export function parseStatData(raw: unknown): Schema {
-  const base = Schema.parse({});
+  const base = Schema.parse({ 主角: { ...DEFAULT_HERO } });
   const merged = _.mergeWith({}, base, raw && typeof raw === 'object' ? raw : {}, (obj, src) =>
     src === undefined ? obj : undefined,
   );
+  const hero_raw = merged.主角 && typeof merged.主角 === 'object' ? merged.主角 : {};
+  merged.主角 = {
+    ...DEFAULT_HERO,
+    ...hero_raw,
+    能力: migrate_raw_ability(
+      (hero_raw.能力 && typeof hero_raw.能力 === 'object' ? hero_raw.能力 : {}) as Record<string, unknown>,
+    ),
+  };
   return Schema.parse(merged);
 }
