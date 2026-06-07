@@ -125,7 +125,7 @@
           {
             "name": "资源预加载",
             "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-            "enabled": true,
+            "enabled": false,
             "type": "script",
             "content": "import 'http://127.0.0.1:5500/dist/手机角色状态栏/脚本/资源预加载/index.js';",
             "info": "",
