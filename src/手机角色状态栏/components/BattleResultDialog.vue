@@ -148,10 +148,7 @@ function on_retry() {
   margin: 0;
   font-size: 20px;
   font-weight: 800;
-  background: var(--gal-gradient-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--gal-text);
 }
 
 .battle-result__subtitle {

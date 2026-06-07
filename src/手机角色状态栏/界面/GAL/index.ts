@@ -1,8 +1,10 @@
 import { createApp } from 'vue';
 import App from '../../App.vue';
 import '../../global.scss';
+import { publishGalAssetsBase } from '../../media';
 
 $(async () => {
+  publishGalAssetsBase();
   await Promise.race([
     waitGlobalInitialized('Mvu'),
     new Promise<void>(resolve => setTimeout(resolve, 5000)),

@@ -8,7 +8,8 @@
     "lint:fix": "eslint --fix",
     "dump": "node dump_schema.ts",
     "sync": "node tavern_sync.mjs",
-    "serve:dist": "serve dist -p 5500 --cors"
+    "serve:dist": "serve dist -p 5500 --cors",
+    "download:assets": "node --experimental-strip-types download_gal_assets.ts"
   },
   "browserslist": [
     "defaults and partially supports es6-module"

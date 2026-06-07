@@ -84,7 +84,10 @@ const DEFAULT_HERO = {
 } as const;
 
 function default_hero() {
-  return { ...DEFAULT_HERO, 能力: migrate_raw_ability({}) };
+  return {
+    ...DEFAULT_HERO,
+    能力: migrate_raw_ability({ 生命: 100, 力量: 10, 体魄: 10, 智慧: 5 }),
+  };
 }
 
 const NpcCoreSchema = z.object({

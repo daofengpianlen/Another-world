@@ -175,16 +175,6 @@ const STORY_BOSSES: CombatRosterEntry[] = [
     能力: { 生命: 210, 力量: 27, 体魄: 21, 智慧: 27 },
     note: '血族首领；数值不得超过同区 Boss 白璃，须单独战胜',
   },
-  {
-    id: 'boss_jin',
-    kind: 'boss',
-    chapter: '第十章',
-    name: '烬',
-    regions: ['邪神葬地'],
-    level: 75,
-    能力: { 生命: 320, 力量: 38, 体魄: 28, 智慧: 30 },
-    note: '葬地天王；战于亚修之前，数值低于区域 Boss 亚修',
-  },
 ];
 
 export const COMBAT_BOSSES: CombatRosterEntry[] = [...REGIONAL_BOSSES, ...STORY_BOSSES];
@@ -513,8 +503,6 @@ const BOSS_NAME_ALIASES: Record<string, string> = {
   四天王莱克斯: '莱克斯',
   '四天王·埃尔温娜': '埃尔温娜',
   四天王埃尔温娜: '埃尔温娜',
-  '葬地天王·烬': '烬',
-  葬地天王烬: '烬',
   '教会圣骑士·修伦': '修伦',
   教会圣骑士修伦: '修伦',
   修伦: '修伦',

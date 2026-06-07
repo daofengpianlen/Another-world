@@ -57,6 +57,11 @@ body {
   background: var(--gal-bg-deep);
 }
 
+.gal-shell,
+.gal-shell__inner {
+  color: var(--gal-text);
+}
+
 [id^='gal-game-ui-'] {
   width: 100%;
   display: block;
@@ -113,10 +118,7 @@ body {
 
   i {
     font-size: 32px;
-    background: var(--gal-gradient-primary);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--gal-violet);
     opacity: 0.85;
   }
 }

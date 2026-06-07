@@ -28,8 +28,8 @@
         <span v-if="gal.has_dialogues" class="dialogue-panel__progress">{{ progress_text }}</span>
       </div>
     </div>
-    <div class="dialogue-panel__body">
-      <div v-if="dialogue" class="dialogue-panel__stage" @click="handle_stage_click">
+    <div class="dialogue-panel__body" @click="handle_panel_click">
+      <div v-if="dialogue" class="dialogue-panel__stage">
         <div class="dialogue-bubble" :class="bubble_class">
           <div
             v-if="has_portrait && portrait_url"
@@ -51,12 +51,11 @@
             >
               <span class="dialogue-bubble__name-text">{{ dialogue.speaker }}</span>
             </div>
-            <div ref="text_wrap_ref" class="dialogue-bubble__text-wrap gal-panel-scroll" @click.stop>
+            <div ref="text_wrap_ref" class="dialogue-bubble__text-wrap gal-panel-scroll">
               <div class="dialogue-bubble__text">{{ dialogue.text }}</div>
             </div>
           </div>
         </div>
-        <span class="dialogue-panel__center-line" aria-hidden="true"></span>
       </div>
       <div v-else class="dialogue-panel__empty gal-empty">
         <i class="fa-regular fa-comment-dots"></i>
@@ -230,14 +229,11 @@ function reset_text_scroll() {
   });
 }
 
-function handle_stage_click(event: MouseEvent) {
+function handle_panel_click(event: MouseEvent) {
   if (!gal.has_dialogues) return;
 
-  const target = event.target as HTMLElement;
-  if (target.closest('.dialogue-bubble__text-wrap')) return;
-
-  const stage = event.currentTarget as HTMLElement;
-  const rect = stage.getBoundingClientRect();
+  const body = event.currentTarget as HTMLElement;
+  const rect = body.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const mid = rect.width / 2;
 
@@ -324,68 +320,16 @@ onUnmounted(() => {
   transition: border-color var(--gal-transition);
   user-select: none;
   overflow: hidden;
+  cursor: pointer;
 
   &:hover {
     border-color: rgba(96, 165, 250, 0.35);
-
-    .dialogue-panel__center-line {
-      opacity: 0.35;
-    }
-
-    .dialogue-panel__stage::before,
-    .dialogue-panel__stage::after {
-      opacity: 1;
-    }
   }
 }
 
 .dialogue-panel__stage {
   position: relative;
   height: 100%;
-  cursor: pointer;
-
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 50%;
-    opacity: 0;
-    transition: opacity var(--gal-transition);
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  &::before {
-    left: 0;
-    background: linear-gradient(90deg, rgba(96, 165, 250, 0.08) 0%, transparent 100%);
-  }
-
-  &::after {
-    right: 0;
-    background: linear-gradient(270deg, rgba(244, 114, 182, 0.08) 0%, transparent 100%);
-  }
-}
-
-.dialogue-panel__center-line {
-  position: absolute;
-  top: 8%;
-  bottom: 8%;
-  left: 50%;
-  width: 1px;
-  transform: translateX(-50%);
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(96, 165, 250, 0.55) 35%,
-    rgba(244, 114, 182, 0.55) 65%,
-    transparent 100%
-  );
-  opacity: 0;
-  transition: opacity var(--gal-transition);
-  pointer-events: none;
-  z-index: 1;
 }
 
 .dialogue-bubble {
@@ -465,22 +409,10 @@ onUnmounted(() => {
 }
 
 .dialogue-bubble__name--character .dialogue-bubble__name-text {
-  background: linear-gradient(
-    90deg,
-    #f8fafc 0%,
-    var(--gal-pink) 28%,
-    var(--gal-violet) 52%,
-    var(--gal-blue) 72%,
-    #f8fafc 100%
-  );
-  background-size: 220% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--gal-pink);
   animation:
-    dialogue-name-shimmer 3.6s linear infinite,
+    dialogue-name-glow 3.6s ease-in-out infinite alternate,
     dialogue-name-enter 0.45s ease-out;
-  filter: drop-shadow(0 0 8px rgba(244, 114, 182, 0.35));
 }
 
 .dialogue-bubble__name--narrator .dialogue-bubble__name-text {
@@ -501,7 +433,6 @@ onUnmounted(() => {
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  cursor: auto;
 }
 
 .dialogue-bubble__text {
@@ -518,13 +449,13 @@ onUnmounted(() => {
   justify-content: center;
 }
 
-@keyframes dialogue-name-shimmer {
+@keyframes dialogue-name-glow {
   0% {
-    background-position: 220% center;
+    filter: drop-shadow(0 0 4px rgba(244, 114, 182, 0.25));
   }
 
   100% {
-    background-position: -220% center;
+    filter: drop-shadow(0 0 10px rgba(167, 139, 250, 0.4));
   }
 }
 

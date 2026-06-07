@@ -112,10 +112,7 @@ function toggleBgm() {
 }
 
 .top-bar__title-text {
-  background: linear-gradient(90deg, #fff 0%, var(--gal-pink) 50%, var(--gal-blue) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--gal-text);
 }
 
 .top-bar__actions {

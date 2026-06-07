@@ -1,28 +1,45 @@
+import type { Ability } from './ability';
 import { merge_hero_avatar_into_mvu_data, merge_hero_avatar_into_stat_data } from './heroAvatar';
 import { parseGalFromMessage } from './galParser';
 import { hasGalBlock } from './messageScope';
 import { Schema, parseStatData } from './schema';
 
-export const OPENING_TITLE = '异世界大冒险';
+export const OPENING_TITLE = '艾瑟兰大世界';
 export const OPENING_FLOOR_ID = 0;
 export const OPENING_MESSAGE_MARKER = '<GalGameOpening/>';
 /** 角色卡 first_mes 亦可仅写「开局」两字（与旧版酒馆正则一致） */
 export const OPENING_TEXT_MARKER = '开局';
 
+export type ProtagonistGender = '男' | '女' | '其他';
+export type OpeningDifficulty = '简单' | '普通' | '困难';
+
+export const OPENING_DIFFICULTY_STATS: Record<OpeningDifficulty, Ability> = {
+  简单: { 生命: 200, 力量: 20, 体魄: 20, 智慧: 10 },
+  普通: { 生命: 100, 力量: 10, 体魄: 10, 智慧: 5 },
+  困难: { 生命: 50, 力量: 5, 体魄: 5, 智慧: 1 },
+};
+
 export interface ProtagonistCreation {
   姓名: string;
+  性别: ProtagonistGender;
   性格: string;
   外貌: string;
-  身份: string;
+  开局难度: OpeningDifficulty;
+  头像?: string;
 }
 
 function trimForm(form: ProtagonistCreation): ProtagonistCreation {
   return {
     姓名: form.姓名.trim(),
+    性别: form.性别,
     性格: form.性格.trim(),
     外貌: form.外貌.trim(),
-    身份: form.身份.trim(),
+    开局难度: form.开局难度,
   };
+}
+
+function abilityForDifficulty(difficulty: OpeningDifficulty): Ability {
+  return { ...OPENING_DIFFICULTY_STATS[difficulty] };
 }
 
 export function normalizeGenerateResult(result: string | GenerateToolCallResult): string {
@@ -171,14 +188,18 @@ export async function persistHeroStatBeforeSend(hero: ReturnType<typeof Schema.p
 
 export function buildOpeningPrompt(form: ProtagonistCreation): string {
   const f = trimForm(form);
+  const stats = abilityForDifficulty(f.开局难度);
   return `[游戏开始·角色创建]
 玩家已创建角色并被女神召唤至艾瑟兰，请生成**第一章**开场剧情。
 
 【主角设定】
 - 姓名：${f.姓名}
+- 性别：${f.性别}
 - 性格：${f.性格}
 - 外貌：${f.外貌}
-- 身份：${f.身份}
+- 开局难度：${f.开局难度}
+- 初始能力：生命 ${stats.生命} / 力量 ${stats.力量} / 体魄 ${stats.体魄} / 智慧 ${stats.智慧}
+- 身份：被女神召唤的异世界勇者
 
 【第一章要点·召唤与圣女】
 - 地点：圣光教会圣地·召唤祭坛 / 圣光教会总坛
@@ -198,16 +219,22 @@ export async function persistProtagonist(form: ProtagonistCreation): Promise<voi
   const f = trimForm(form);
   const message_id = OPENING_FLOOR_ID;
   const old_data = Mvu.getMvuData({ type: 'message', message_id }) ?? {};
-  const stat_data = parseStatData({
-    ..._.get(old_data, 'stat_data', {}),
-    主角: {
-      ..._.get(old_data, 'stat_data.主角', {}),
-      姓名: f.姓名,
-      性格: f.性格,
-      外貌: f.外貌,
-      身份: f.身份,
-    },
-  });
+  const stat_data = merge_hero_avatar_into_stat_data(
+    parseStatData({
+      ..._.get(old_data, 'stat_data', {}),
+      主角: {
+        ..._.get(old_data, 'stat_data.主角', {}),
+        姓名: f.姓名,
+        性别: f.性别,
+        性格: f.性格,
+        外貌: f.外貌,
+        身份: '异世界勇者',
+        能力: abilityForDifficulty(f.开局难度),
+        ...(f.头像?.trim() ? { 头像: f.头像.trim() } : {}),
+      },
+    }),
+  );
+  if (f.头像?.trim()) write_hero_avatar(f.头像.trim());
   await Mvu.replaceMvuData({ ...old_data, stat_data }, { type: 'message', message_id });
 }
 
@@ -215,9 +242,12 @@ function mergeProtagonistIntoData(data: Mvu.MvuData, form: ProtagonistCreation):
   const f = trimForm(form);
   const next = _.cloneDeep(data);
   _.set(next, 'stat_data.主角.姓名', f.姓名);
+  _.set(next, 'stat_data.主角.性别', f.性别);
   _.set(next, 'stat_data.主角.性格', f.性格);
   _.set(next, 'stat_data.主角.外貌', f.外貌);
-  _.set(next, 'stat_data.主角.身份', f.身份);
+  _.set(next, 'stat_data.主角.身份', '异世界勇者');
+  _.set(next, 'stat_data.主角.能力', abilityForDifficulty(f.开局难度));
+  if (f.头像?.trim()) _.set(next, 'stat_data.主角.头像', f.头像.trim());
   return next;
 }
 
@@ -341,8 +371,14 @@ export async function startGame(form: ProtagonistCreation): Promise<string> {
   if (!trimmed.姓名) {
     throw new Error('请输入主角姓名');
   }
-  if (!trimmed.性格 || !trimmed.外貌 || !trimmed.身份) {
-    throw new Error('请完整填写性格、外貌与身份');
+  if (!trimmed.性格 || !trimmed.外貌) {
+    throw new Error('请完整填写性格与外貌');
+  }
+  if (!trimmed.性别) {
+    throw new Error('请选择性别');
+  }
+  if (!trimmed.开局难度) {
+    throw new Error('请选择开局难度');
   }
 
   await persistProtagonist(trimmed);

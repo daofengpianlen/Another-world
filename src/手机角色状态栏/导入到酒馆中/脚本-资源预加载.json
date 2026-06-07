@@ -1,0 +1,16 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "name": "手机角色状态栏-资源预加载",
+  "content": "import 'http://127.0.0.1:5500/dist/手机角色状态栏/脚本/资源预加载/index.js'",
+  "info": "后台预加载全部 CG、立绘、头像、地图背景等到 IndexedDB；源站失效后仍可从本地缓存显示。建议与 GAL 界面脚本一并启用。",
+  "buttons": [
+    {
+      "name": "重新预加载资源",
+      "visible": true
+    },
+    {
+      "name": "暂停资源预加载",
+      "visible": true
+    }
+  ]
+}

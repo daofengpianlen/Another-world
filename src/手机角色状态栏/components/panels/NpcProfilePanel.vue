@@ -193,10 +193,7 @@ watch(name, n => {
   margin: 0 0 10px;
   font-size: 18px;
   font-weight: 800;
-  background: var(--gal-gradient-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--gal-text);
   line-height: 1.2;
   word-break: break-word;
 }
@@ -297,10 +294,7 @@ watch(name, n => {
     display: block;
     font-size: 18px;
     margin-bottom: 6px;
-    background: var(--gal-gradient-primary);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--gal-violet);
   }
 }
 

@@ -135,10 +135,7 @@ async function on_event_ignore() {
   }
 
   span {
-    background: var(--gal-gradient-primary);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--gal-violet);
   }
 }
 

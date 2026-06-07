@@ -430,12 +430,18 @@ async function send() {
 }
 
 .chat-panel__name--idle {
-  background: linear-gradient(90deg, #f8fafc 0%, var(--gal-pink) 40%, var(--gal-blue) 60%, #f8fafc 100%);
-  background-size: 220% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: chat-name-shimmer 4s linear infinite;
+  color: var(--gal-pink);
+  animation: chat-name-glow 4s ease-in-out infinite alternate;
+}
+
+@keyframes chat-name-glow {
+  0% {
+    filter: drop-shadow(0 0 4px rgba(244, 114, 182, 0.25));
+  }
+
+  100% {
+    filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.35));
+  }
 }
 
 .chat-panel__subtitle {
@@ -444,16 +450,6 @@ async function send() {
   font-size: 9px;
   letter-spacing: 0.22em;
   color: rgba(226, 232, 240, 0.45);
-}
-
-@keyframes chat-name-shimmer {
-  0% {
-    background-position: 220% center;
-  }
-
-  100% {
-    background-position: -220% center;
-  }
 }
 
 .chat-panel__messages {
@@ -488,10 +484,7 @@ async function send() {
 
   i {
     font-size: 28px;
-    background: linear-gradient(135deg, var(--gal-pink), var(--gal-blue));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--gal-violet);
   }
 }
 

@@ -1,7 +1,7 @@
 <template>
   <section class="protagonist-panel">
     <div class="protagonist-panel__hero gal-card">
-        <label class="avatar-upload">
+        <label class="avatar-upload" :class="{ 'avatar-upload--has-image': avatar_src }">
           <img v-if="avatar_src" :src="avatar_src" alt="主角头像" />
           <div v-else class="avatar-upload__placeholder">{{ initial }}</div>
           <input id="protagonist-avatar-upload" name="avatar" type="file" accept="image/*" hidden @change="onUpload" />
@@ -101,6 +101,14 @@ function onUpload(event: Event) {
     height: 100%;
     object-fit: cover;
   }
+
+  &--has-image .avatar-upload__hint {
+    opacity: 0;
+  }
+
+  &--has-image:hover .avatar-upload__hint {
+    opacity: 1;
+  }
 }
 
 .avatar-upload__placeholder {
@@ -125,6 +133,8 @@ function onUpload(event: Event) {
   text-align: center;
   background: rgba(0, 0, 0, 0.55);
   color: #fff;
+  opacity: 1;
+  transition: opacity var(--gal-transition);
 }
 
 .protagonist-panel__info {
@@ -136,10 +146,7 @@ function onUpload(event: Event) {
   margin: 0 0 10px;
   font-size: 18px;
   font-weight: 800;
-  background: var(--gal-gradient-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--gal-text);
 }
 
 .info-grid {
@@ -164,6 +171,7 @@ function onUpload(event: Event) {
   strong {
     text-align: right;
     word-break: break-word;
+    color: var(--gal-text);
   }
 }
 
@@ -223,10 +231,7 @@ function onUpload(event: Event) {
     display: block;
     font-size: 18px;
     margin-bottom: 6px;
-    background: var(--gal-gradient-primary);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--gal-violet);
   }
 }
 
@@ -240,5 +245,6 @@ function onUpload(event: Event) {
 .stat-card__value {
   font-size: 20px;
   font-weight: 800;
+  color: var(--gal-text);
 }
 </style>

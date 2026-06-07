@@ -2,8 +2,10 @@ import { mountStreamingMessages } from '@util/streaming';
 import GameRoot from '../../GameRoot.vue';
 import '../../global.scss';
 import { isOpeningFloor } from '../../messageScope';
+import { publishGalAssetsBase } from '../../media';
 
 $(async () => {
+  publishGalAssetsBase();
   await Promise.race([
     waitGlobalInitialized('Mvu'),
     new Promise<void>(resolve => setTimeout(resolve, 5000)),

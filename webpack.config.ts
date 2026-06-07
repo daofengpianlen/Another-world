@@ -106,6 +106,21 @@ function watch_tavern_helper(compiler: webpack.Compiler) {
   }
 }
 
+function copy_gal_assets(compiler: webpack.Compiler) {
+  const copy = () => {
+    const src = path.join(import.meta.dirname, 'src/手机角色状态栏/assets');
+    const dest = path.join(import.meta.dirname, 'dist/手机角色状态栏/assets');
+    if (!fs.existsSync(src)) return;
+    fs.cpSync(src, dest, { recursive: true, force: true });
+    console.info('\x1b[36m[gal_assets]\x1b[0m 已复制本地资源到 dist/手机角色状态栏/assets');
+  };
+  if (!compiler.options.watch) {
+    compiler.hooks.beforeRun.tap('copy_gal_assets', copy);
+    return;
+  }
+  compiler.hooks.watchRun.tap('copy_gal_assets', copy);
+}
+
 let watcher: FSWatcher;
 const dump = () => {
   exec('pnpm dump', { cwd: import.meta.dirname });
@@ -440,6 +455,7 @@ function parse_configuration(entry: Entry): (_env: any, argv: any) => webpack.Co
         { apply: watch_tavern_helper },
         { apply: schema_dump },
         { apply: tavern_sync },
+        { apply: copy_gal_assets },
         new VueLoaderPlugin(),
         unpluginAutoImport({
           dts: true,

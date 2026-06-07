@@ -1,10 +1,10 @@
 <template>
   <div class="portrait-circle" :class="[`portrait-circle--${tone}`]" :style="size_style" :title="label">
     <img
-      v-if="src && !failed"
+      v-if="display_url && !failed"
       class="portrait-circle__img"
       :class="{ 'portrait-circle__img--npc': tone === 'npc' || tone === 'enemy' }"
-      :src="src"
+      :src="display_url"
       :alt="label"
       @error="failed = true"
     />
@@ -15,6 +15,7 @@
 <script setup lang="ts">
 import { getAvatarInitial } from '../chatPersona';
 import { NPC_AVATAR_OBJECT_POSITION } from '../media';
+import { useCachedMedia } from '../useCachedMedia';
 
 const props = withDefaults(
   defineProps<{
@@ -27,6 +28,9 @@ const props = withDefaults(
 );
 
 const failed = ref(false);
+
+const source = computed(() => props.src ?? '');
+const { display_url } = useCachedMedia(source);
 
 watch(
   () => props.src,
@@ -93,10 +97,7 @@ const size_style = computed(() => ({
   justify-content: center;
   font-weight: 700;
   font-size: 38%;
-  background: var(--gal-gradient-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--gal-pink);
   line-height: 1;
 }
 
