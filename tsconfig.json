@@ -36,7 +36,10 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
+<<<<<<< HEAD
     "resolveJsonModule": true,
+=======
+>>>>>>> fdfcbc5386747889d0b011123d4dde6612c67d1b
     "forceConsistentCasingInFileNames": true
   },
   "include": [

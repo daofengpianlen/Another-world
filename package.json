@@ -7,9 +7,13 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "dump": "node dump_schema.ts",
+<<<<<<< HEAD
     "sync": "node tavern_sync.mjs",
     "serve:dist": "serve dist -p 5500 --cors",
     "download:assets": "node --experimental-strip-types download_gal_assets.ts"
+=======
+    "sync": "node tavern_sync.mjs"
+>>>>>>> fdfcbc5386747889d0b011123d4dde6612c67d1b
   },
   "browserslist": [
     "defaults and partially supports es6-module"
@@ -57,7 +61,10 @@
     "remark-loader": "^6.0.0",
     "sass": "^1.100.0",
     "sass-loader": "^16.0.8",
+<<<<<<< HEAD
     "serve": "^14.2.6",
+=======
+>>>>>>> fdfcbc5386747889d0b011123d4dde6612c67d1b
     "socket.io": "^4.8.3",
     "style-loader": "^4.0.0",
     "tailwindcss": "^4.3.0",
