@@ -106,6 +106,7 @@ function watch_tavern_helper(compiler: webpack.Compiler) {
   }
 }
 
+<<<<<<< HEAD
 function copy_gal_assets(compiler: webpack.Compiler) {
   const copy = () => {
     const src = path.join(import.meta.dirname, 'src/手机角色状态栏/assets');
@@ -121,6 +122,8 @@ function copy_gal_assets(compiler: webpack.Compiler) {
   compiler.hooks.watchRun.tap('copy_gal_assets', copy);
 }
 
+=======
+>>>>>>> 24c09dd0d2e3a345ced6bd6449ff0c89cd686543
 let watcher: FSWatcher;
 const dump = () => {
   exec('pnpm dump', { cwd: import.meta.dirname });
@@ -455,7 +458,10 @@ function parse_configuration(entry: Entry): (_env: any, argv: any) => webpack.Co
         { apply: watch_tavern_helper },
         { apply: schema_dump },
         { apply: tavern_sync },
+<<<<<<< HEAD
         { apply: copy_gal_assets },
+=======
+>>>>>>> 24c09dd0d2e3a345ced6bd6449ff0c89cd686543
         new VueLoaderPlugin(),
         unpluginAutoImport({
           dts: true,
