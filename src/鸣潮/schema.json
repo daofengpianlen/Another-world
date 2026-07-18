@@ -1,0 +1,525 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "default": {},
+  "type": "object",
+  "properties": {
+    "当前时间": {
+      "default": "",
+      "type": "string"
+    },
+    "所在地点": {
+      "default": "",
+      "type": "string"
+    },
+    "剧情显示": {
+      "default": "",
+      "type": "string"
+    },
+    "是否为后日谈": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "当前长期目标": {
+      "default": "",
+      "type": "string"
+    },
+    "当前演绎事件": {
+      "default": "",
+      "type": "string"
+    },
+    "当前演绎事件节点": {
+      "default": "",
+      "type": "string"
+    },
+    "即将进行的下一个事件节点": {
+      "default": "",
+      "type": "string"
+    },
+    "已完成的上一个事件": {
+      "default": "",
+      "type": "string"
+    },
+    "已完成的上一个事件节点": {
+      "default": "",
+      "type": "string"
+    },
+    "章节终止条件": {
+      "default": "",
+      "type": "string"
+    },
+    "主角信息": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "是否是漂泊者": {
+          "default": true,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "性别": {
+          "default": "男",
+          "type": "string"
+        },
+        "身份与额外设定": {
+          "default": "",
+          "type": "string"
+        },
+        "当前状态": {
+          "default": "",
+          "type": "string"
+        },
+        "当前穿着": {
+          "default": "",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/__schema1"
+            }
+          ]
+        },
+        "性爱状态": {
+          "$ref": "#/$defs/__schema2"
+        },
+        "物品栏": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "default": {},
+            "type": "object",
+            "properties": {
+              "数量": {
+                "default": 1,
+                "type": "number"
+              },
+              "描述": {
+                "default": "",
+                "type": "string"
+              },
+              "类型": {
+                "default": "杂物",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "NPC漂泊者": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "是否存在": {
+          "default": false,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "性别": {
+          "default": "女",
+          "type": "string"
+        }
+      }
+    },
+    "女性角色": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "default": {},
+        "type": "object",
+        "properties": {
+          "基础信息": {
+            "default": {},
+            "type": "object",
+            "properties": {
+              "角色名字": {
+                "default": "",
+                "type": "string"
+              },
+              "身高": {
+                "default": "等待AI填入",
+                "type": "string"
+              },
+              "罩杯": {
+                "default": "等待AI填入",
+                "type": "string"
+              },
+              "外貌": {
+                "default": "等待AI填入",
+                "type": "string"
+              },
+              "是否为处女": {
+                "default": true,
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          },
+          "是否在场": {
+            "$ref": "#/$defs/__schema0"
+          },
+          "声痕位置": {
+            "default": "等待AI填入",
+            "type": "string"
+          },
+          "当前穿着": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/$defs/__schema1"
+              }
+            ]
+          },
+          "好感度": {
+            "default": 0,
+            "type": "number"
+          },
+          "性欲": {
+            "default": 0,
+            "type": "number"
+          },
+          "额外信息": {
+            "default": {},
+            "type": "object",
+            "properties": {
+              "角色称号": {
+                "default": "等待AI填入",
+                "type": "string"
+              },
+              "内心想法": {
+                "default": "等待AI填入",
+                "type": "string"
+              }
+            }
+          },
+          "特写": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "default": {},
+              "type": "object",
+              "properties": {
+                "部位": {
+                  "default": "",
+                  "type": "string"
+                },
+                "描写": {
+                  "default": "",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "物品": {
+            "default": "等待AI填入",
+            "type": "string"
+          },
+          "性爱状态": {
+            "$ref": "#/$defs/__schema2"
+          },
+          "生理状态": {
+            "default": {},
+            "type": "object",
+            "properties": {
+              "阴道润滑": {
+                "default": "等待AI填入",
+                "type": "string"
+              },
+              "乳头状态": {
+                "default": "等待AI填入",
+                "type": "string"
+              },
+              "阴蒂状态": {
+                "default": "等待AI填入",
+                "type": "string"
+              },
+              "子宫状态": {
+                "default": "等待AI填入",
+                "type": "string"
+              },
+              "是否怀孕": {
+                "default": false,
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          },
+          "私密资料": {
+            "default": {},
+            "type": "object",
+            "properties": {
+              "性交次数": {
+                "default": 0,
+                "type": "number"
+              },
+              "性伴侣数": {
+                "default": 0,
+                "type": "number"
+              },
+              "性爱经验": {
+                "default": "等待AI填入",
+                "type": "string"
+              },
+              "偏爱玩法": {
+                "default": "等待AI填入",
+                "type": "string"
+              },
+              "持久痕迹": {
+                "default": "等待AI填入",
+                "type": "string"
+              },
+              "性爱日志": {
+                "default": [],
+                "type": "array",
+                "items": {
+                  "default": {},
+                  "type": "object",
+                  "properties": {
+                    "时间": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "内容": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "结果": {
+                      "default": "",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "_已知角色名单": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        }
+      ]
+    },
+    "_现场女性角色显示": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        }
+      ]
+    },
+    "剧情触发器": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "default": {},
+        "type": "object",
+        "properties": {
+          "事件类别": {
+            "default": "事件",
+            "type": "string"
+          },
+          "事件简述": {
+            "default": "",
+            "type": "string"
+          },
+          "状态": {
+            "default": "待触发",
+            "type": "string"
+          },
+          "事件计时": {
+            "default": "",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "伏笔": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "default": {},
+        "type": "object",
+        "properties": {
+          "伏笔内容": {
+            "default": "",
+            "type": "string"
+          },
+          "指向的预期结果": {
+            "default": "",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "_storyState": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "majorVerIdx": {
+          "default": 0,
+          "type": "number"
+        },
+        "partIdx": {
+          "default": 0,
+          "type": "number"
+        },
+        "isPostScript": {
+          "default": false,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "_anchorVer": {
+          "default": "1.0",
+          "type": "string"
+        }
+      }
+    },
+    "指令": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "推进剧情": {
+          "default": null
+        },
+        "跳转版本": {
+          "default": null
+        },
+        "修改后日谈模式为": {
+          "default": null
+        }
+      }
+    }
+  },
+  "$defs": {
+    "__schema0": {
+      "default": "false",
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        }
+      ]
+    },
+    "__schema1": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "上装": {
+          "default": "等待AI填入",
+          "type": "string"
+        },
+        "下装": {
+          "default": "等待AI填入",
+          "type": "string"
+        },
+        "饰品": {
+          "default": "等待AI填入",
+          "type": "string"
+        },
+        "其它": {
+          "default": "等待AI填入",
+          "type": "string"
+        }
+      }
+    },
+    "__schema2": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "是否正在性爱": {
+          "default": false,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "高潮进度": {
+          "default": 0,
+          "type": "number"
+        },
+        "高潮计数": {
+          "default": 0,
+          "type": "number"
+        },
+        "_高潮次数上限": {
+          "default": 5,
+          "type": "number"
+        }
+      }
+    }
+  }
+}

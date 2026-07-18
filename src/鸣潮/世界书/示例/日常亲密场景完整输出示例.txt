@@ -1,0 +1,61 @@
+---
+日常亲密场景完整输出示例:
+  用途: |-
+    **金标准**：日常/后日谈/亲密互动也必须输出完整 <UpdateVariable>。
+    禁止在 <StatusPlaceHolderImpl/> 处结束回复。
+    pic 写场景名（手交、日常），禁止 i75k8e.mp4 等文件名。
+
+  完整 assistant 消息_复制用: |-
+    <gal>
+    <p>卡提希娅把那顶桂冠扣正，耳尖的红还没褪干净。她拉过矮凳坐到床边，深吸一口气，伸手握住空的阴茎，开始上下套弄。</p>
+    <z>卡提希娅<pic>手交</pic>……就、就这一次。<心>脸好烫。还好他看不见我的表情。</心></z>
+    <p>她的拇指划过马眼，带出一点透明的先走汁，节奏渐渐稳定下来。窗外贡多拉的桨声哗啦啦地响。</p>
+    <z>卡提希娅<pic>手交</pic>这样……舒服吗？<心>比上次摸到的时候好像更烫了……不对，我在想什么。</心></z>
+    </gal>
+    <options>
+    <font color="#f472b6">💬 低声说些什么</font>
+    <font color="#a78bfa">👀 观察她的表情</font>
+    </options>
+    <StatusPlaceHolderImpl/>
+    <UpdateVariable>
+    <Analysis>Handjob scene with Cartethyia; sex status active; arousal 35; affection +5; physiological update; time +15min.</Analysis>
+    <JSONPatch>
+    [
+      { "op": "replace", "path": "/当前时间", "value": "第1年 1月1日 周一 14:45" },
+      { "op": "replace", "path": "/主角信息/当前状态", "value": "勃起中，正在接受手交" },
+      { "op": "replace", "path": "/女性角色/卡提希娅/性爱状态/是否正在性爱", "value": true },
+      { "op": "replace", "path": "/女性角色/卡提希娅/性爱状态/高潮进度", "value": 35 },
+      { "op": "replace", "path": "/女性角色/卡提希娅/额外信息/内心想法", "value": "脸好烫……节奏终于稳了。他怎么还直勾勾的……" },
+      { "op": "replace", "path": "/女性角色/卡提希娅/生理状态/阴道润滑", "value": "轻微湿润" },
+      { "op": "replace", "path": "/女性角色/卡提希娅/生理状态/乳头状态", "value": "微微挺立" },
+      { "op": "replace", "path": "/女性角色/卡提希娅/生理状态/阴蒂状态", "value": "敏感" },
+      { "op": "replace", "path": "/女性角色/卡提希娅/生理状态/子宫状态", "value": "正常" },
+      { "op": "replace", "path": "/女性角色/卡提希娅/生理状态/是否怀孕", "value": false },
+      { "op": "delta", "path": "/女性角色/卡提希娅/好感度", "value": 5 }
+    ]
+    </JSONPatch>
+    </UpdateVariable>
+
+  事后_结束亲密_示例_JSONPatch: |-
+    [
+      { "op": "replace", "path": "/女性角色/卡提希娅/性爱状态/是否正在性爱", "value": false },
+      { "op": "replace", "path": "/女性角色/卡提希娅/性爱状态/高潮进度", "value": 0 },
+      { "op": "replace", "path": "/主角信息/当前状态", "value": "高潮后脱力，呼吸渐平" }
+    ]
+
+  手交_说明: 手交/口交/足交等边缘行为**不** delta 性交次数、**不**改性伴侣数
+
+  阴道性交_事后_示例_JSONPatch: |-
+    [
+      { "op": "replace", "path": "/女性角色/秧秧/性爱状态/是否正在性爱", "value": false },
+      { "op": "replace", "path": "/女性角色/秧秧/性爱状态/高潮进度", "value": 0 },
+      { "op": "delta", "path": "/女性角色/秧秧/私密资料/性交次数", "value": 1 },
+      { "op": "replace", "path": "/女性角色/秧秧/私密资料/性伴侣数", "value": 1 },
+      { "op": "insert", "path": "/女性角色/秧秧/私密资料/性爱日志/-", "value": { "时间": "今州历 23:40", "内容": "正常位", "结果": "射精完结" } }
+    ]
+
+  自检:
+    - □ GAL 之后有 StatusPlaceHolderImpl
+    - □ StatusPlaceHolderImpl 之后有完整 UpdateVariable（不是省略号）
+    - □ pic 为 手交 而非 mp4 文件名
+    - □ 更新了 性爱状态、生理状态、内心想法

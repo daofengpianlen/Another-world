@@ -1,0 +1,17 @@
+{
+  "type": "script",
+  "enabled": true,
+  "name": "鸣潮开场",
+  "id": "55647d6b-e5bd-4fa2-b73b-35a89fab9b70",
+  "content": "import 'http://127.0.0.1:5500/dist/鸣潮/脚本/开场/index.js'",
+  "info": "已废弃：开场面板已合并进「鸣潮伪同层」。请禁用本脚本。",
+  "button": {
+    "enabled": false,
+    "buttons": []
+  },
+  "data": {},
+  "export_with": {
+    "data": true,
+    "button": true
+  }
+}

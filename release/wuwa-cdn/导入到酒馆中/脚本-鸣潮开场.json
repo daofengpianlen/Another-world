@@ -1,0 +1,17 @@
+{
+  "type": "script",
+  "enabled": true,
+  "name": "鸣潮开场",
+  "id": "55647d6b-e5bd-4fa2-b73b-35a89fab9b70",
+  "content": "import 'https://cdn.jsdelivr.net/gh/daofengpianlen/-@main/dist/鸣潮/%E8%84%9A%E6%9C%AC/%E5%BC%80%E5%9C%BA/index.js'",
+  "info": "已废弃：开场面板已合并进「鸣潮伪同层」。请禁用本脚本。 [CDN: https://cdn.jsdelivr.net/gh/daofengpianlen/-@main]",
+  "button": {
+    "enabled": false,
+    "buttons": []
+  },
+  "data": {},
+  "export_with": {
+    "data": true,
+    "button": true
+  }
+}

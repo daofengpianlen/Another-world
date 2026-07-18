@@ -1,0 +1,262 @@
+function getOpeningText(scenario, playerName) {
+      const templateId = `opening-${scenario}`;
+      const template =   document.getElementById(templateId);
+
+      if (!template) {
+        return `# 错误\n\n未找到场景 ${scenario} 的开场白模板。`;
+      }
+
+      /* 获取模板内容并替换玩家名 */
+      let text = template.innerHTML.trim();
+      text = text.replace(/\{playerName\}/g, playerName);
+
+      /* 获取对应的身份 */
+      const identity = IDENTITY_MAP[scenario] || '训练家';
+
+      /* 在开场白末尾嵌入变量更新指令 */
+      text += `\n\n<UpdateVariable>
+<Analysis>
+- Time: 0 (game initialization at 00:00)
+- Player registered as "${playerName}" with identity "${identity}"
+- Initialize game start timestamp: 2022-05-08 00:00
+</Analysis>
+<JSONPatch>
+[
+  { "op": "replace", "path": "/玩家名", "value": "${playerName}" },
+  { "op": "replace", "path": "/训练家/身份", "value": "${identity}" }
+]
+</JSONPatch>
+</UpdateVariable>`;
+
+      return text;
+    }
+
+    /* ========================================== */
+    /* 发送开场白到聊天框 */
+    /* ========================================== */
+    function sendOpeningToChat(openingText) {
+      console.log('[启动器] 准备发送开场白');
+
+      /* 方式1: 使用 triggerSlash (参考轮回乐园的成功经验) */
+      if (typeof triggerSlash === 'function') {
+        triggerSlash(`/send ${openingText}|/trigger`);
+        console.log('[启动器] ✅ 已通过 triggerSlash 发送');
+        return true;
+      }
+
+      /* 方式2: 使用 SillyTavern 的全局 API */
+      if (typeof sendUserMessage === 'function') {
+        sendUserMessage(openingText);
+        console.log('[启动器] ✅ 已通过 sendUserMessage 发送');
+        return true;
+      }
+
+      /* 方式3: 直接操作输入框 */
+      try {
+        const $textarea = $('#send_textarea');
+        if ($textarea.length > 0) {
+          $textarea.val(openingText).trigger('input');
+          console.log('[启动器] ✅ 已填充到输入框');
+
+          /* 延迟点击发送按钮，确保输入框更新完成 */
+          setTimeout(() => {
+            const $sendBtn = $('#send_but');
+            if ($sendBtn.length > 0) {
+              $sendBtn.click();
+              console.log('[启动器] ✅ 已自动点击发送按钮');
+            }
+          }, 300);
+
+          return true;
+        }
+      } catch (e) {
+        console.error('[启动器] ❌ 输入框填充失败:', e);
+      }
+
+      /* 方式4: postMessage 通信 */
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'tavern_opening',
+            content: openingText
+          }, '*');
+          console.log('[启动器] ✅ 已通过 postMessage 发送');
+          return true;
+        }
+
+        if (window.opener) {
+          window.opener.postMessage({
+            type: 'tavern_opening',
+            content: openingText
+          }, '*');
+          console.log('[启动器] ✅ 已通过 opener.postMessage 发送');
+          return true;
+        }
+      } catch (e) {
+        console.error('[启动器] ❌ postMessage 失败:', e);
+      }
+
+      /* 方式5: 复制到剪贴板（兜底方案） */
+      try {
+        navigator.clipboard.writeText(openingText).then(() => {
+          alert('✅ 开场文本已复制到剪贴板！\n\n请粘贴到聊天框中发送。');
+          console.log('[启动器] ✅ 已复制到剪贴板');
+        });
+        return true;
+      } catch (e) {
+        console.error('[启动器] ❌ 剪贴板操作失败:', e);
+      }
+
+      /* 兜底：弹窗显示文本 */
+      alert('⚠️ 自动发送失败，请手动复制以下内容：\n\n' + openingText.substring(0, 200) + '...');
+      return false;
+    }
+
+    /* ========================================== */
+    /* 场景选择逻辑 */
+    /* ========================================== */
+    function setupScenarioSelection() {
+      $('.scenario-card').on('click', function() {
+        $('.scenario-card').removeClass('selected');
+        $(this).addClass('selected');
+        selectedScenario = $(this).data('scenario');
+        updateButtonState();
+      });
+    }
+
+    /* ========================================== */
+    /* 输入监听 */
+    /* ========================================== */
+    function setupInputListener() {
+      $('#playerName').on('input', updateButtonState);
+
+      /* 回车快捷键 */
+      $('#playerName').on('keypress', function(e) {
+        if (e.key === 'Enter' && !$('#startBtn').prop('disabled')) {
+          $('#startBtn').click();
+        }
+      });
+    }
+
+    /* ========================================== */
+    /* 按钮状态更新 */
+    /* ========================================== */
+    function updateButtonState() {
+      const hasName = $('#playerName').val().trim().length > 0;
+      const hasScenario = selectedScenario !== null;
+      $('#startBtn').prop('disabled', !(hasName && hasScenario));
+    }
+
+    /* ========================================== */
+    /* 开始游戏 */
+    /* ========================================== */
+    function startGame() {
+      const playerName = $('#playerName').val().trim();
+
+      if (!playerName || !selectedScenario) {
+        return;
+      }
+
+      /* 禁用按钮，防止重复点击 */
+      $('#startBtn').prop('disabled', true).text('正在启动系统...');
+
+      /* 生成开场白（已内置变量更新指令） */
+      const openingText = getOpeningText(selectedScenario, playerName);
+
+      /* 发送到聊天框 */
+      const success = sendOpeningToChat(openingText);
+
+      /* 更新按钮状态 */
+      if (success) {
+        setTimeout(() => {
+          $('#startBtn').text('✅ 启动完成！');
+          $('.hint').html('✨ 开场白已发送，AI正在初始化世界...<br><span style="font-size:11px;color:#95a5a6;">你可以关闭此状态栏了</span>');
+        }, 800);
+      } else {
+        setTimeout(() => {
+          $('#startBtn').prop('disabled', false).text('重新尝试');
+        }, 1500);
+      }
+    }
+
+    /* ========================================== */
+    /* 初始化 */
+    /* ========================================== */
+    async function init() {
+      try {
+        await waitGlobalInitialized('Mvu');
+        console.log('[启动器] Mvu已就绪');
+
+        setupScenarioSelection();
+        setupInputListener();
+
+        $('#startBtn').on('click', startGame);
+
+        console.log('[启动器] 初始化完成');
+      } catch (error) {
+        console.error('[启动器] 初始化失败:', error);
+      }
+    }
+
+    $(errorCatched(init));
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="header-bar"></div>
+
+    <div class="header">
+      <div class="pokeball-deco left"></div>
+      <div class="pokeball-deco right"></div>
+      <div class="title">战姬养成系统</div>
+      <div class="subtitle">训练家登记处</div>
+    </div>
+
+    <div class="content">
+      <div class="label">输入你的名字</div>
+      <div class="input-wrapper">
+        <input
+          type="text"
+          id="playerName"
+          placeholder="请输入你的真实姓名..."
+          maxlength="20"
+          autocomplete="off"
+        >
+      </div>
+
+      <div class="selection-label">选择你的开局</div>
+      <div class="scenario-grid">
+        <div class="scenario-card" data-scenario="student">
+          <div class="scenario-icon">🎒</div>
+          <div class="scenario-title">学生开局</div>
+          <div class="scenario-desc">高中生身份，在校园中觉醒</div>
+        </div>
+
+        <div class="scenario-card" data-scenario="worker">
+          <div class="scenario-icon">💼</div>
+          <div class="scenario-title">社畜开局</div>
+          <div class="scenario-desc">上班族身份，在公司中觉醒</div>
+        </div>
+
+        <div class="scenario-card" data-scenario="neet">
+          <div class="scenario-icon">🏠</div>
+          <div class="scenario-title">家里蹲开局</div>
+          <div class="scenario-desc">NEET身份，在家中觉醒</div>
+        </div>
+
+        <div class="scenario-card" data-scenario="delinquent">
+          <div class="scenario-icon">😎</div>
+          <div class="scenario-title">不良少年开局</div>
+          <div class="scenario-desc">混混身份，在街头觉醒</div>
+        </div>
+      </div>
+
+      <button class="start-btn" id="startBtn" disabled>开始冒险</button>
+      <div class="hint">请输入姓名并选择开局场景</div>
+    </div>
+
+    <div class="footer-bar"></div>
+  </div>
+</body>
+</html>
+```

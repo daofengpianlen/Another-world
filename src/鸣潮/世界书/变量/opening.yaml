@@ -1,0 +1,17 @@
+# [opening] 条目内容模板（条目名称须含 [opening]）
+# 由鸣潮开场面板自动覆盖；用于下次打开面板时回显表单
+# 初始可留空或保留下列占位
+
+UI_PlayRover: true
+UI_MyGender: "男"
+UI_NpcExist: false
+UI_NpcGender: "女"
+UI_IsStoryMode: true
+UI_StoryVer: "0,0"
+UI_StoryStage: "发生前"
+UI_CustomIdentity: ""
+UI_AiRefine: false
+所在区域: "瑝珑-今州"
+详细地点: ""
+目标角色: ""
+补充剧情: ""

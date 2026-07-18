@@ -1,0 +1,280 @@
+---
+变量输出格式:
+  硬性规则:
+    - 【每条剧情回复必填】assistant 输出 <gal> 时，**末尾必须**含 <UpdateVariable>；禁止在 <StatusPlaceHolderImpl/> 后结束
+    - 【必填时机】任何剧情推进、对话、亲密/性爱、时间地点、好感、穿着、生理状态变化 → 必须输出 UpdateVariable
+    - 【结构】必须严格使用下列 XML 外壳，JSONPatch 为合法 JSON 数组
+    - 【路径】以 / 开头，对应 stat_data 根键；**禁止** /stat_data/... 前缀
+    - 【键名】只能使用「变量列表」定义的键名；**禁止**自创根键
+    - 【占位符】value 禁止为 "等待AI填入" 或 "等待AI根据用户设定补全…"
+    - 【只读】禁止 replace /_storyState/*、/指令/*、/剧情显示（除非世界书明确要求）
+    - 【首登场】/女性角色/{名} 用 add 或 insert，value 为**完整 HeroineEntry**（见变量列表模板）
+    - 【已登场】用 replace；好感度小改用 delta ±(3~8)
+    - 【同 patch】同一角色若 add 已含好感度，勿再 delta 同路径
+    - 【布尔】是否在场、是否为后日谈 建议字符串 "true" / "false"
+    - 【双轨】推荐同时 add /女性角色/{名} + /contact/{名}；至少要有 /女性角色/{名}
+    - 冲突时以「变量更新规则」为准
+
+  标准外壳_每条回复末尾必填:
+    说明: 下列不是摘要，是**必须输出的完整结构**；JSONPatch 内必须是真实 JSON，不可用 … 省略
+    format: |-
+      <StatusPlaceHolderImpl/>
+      <UpdateVariable>
+      <Analysis>English: time elapsed, what changed, why (max 80 words)</Analysis>
+      <JSONPatch>
+      [
+        { "op": "replace", "path": "/当前时间", "value": "今州历·云陵谷 08:30" },
+        { "op": "replace", "path": "/所在地点", "value": "瑝珑-今州·云陵谷·临溪草坡" },
+        { "op": "replace", "path": "/主角信息/当前状态", "value": "意识清醒" },
+        { "op": "delta", "path": "/女性角色/秧秧/好感度", "value": 3 },
+        { "op": "delta", "path": "/女性角色/秧秧/性欲", "value": 2 },
+        { "op": "replace", "path": "/女性角色/秧秧/额外信息/内心想法", "value": "他似乎开始信任我了。" }
+      ]
+      </JSONPatch>
+      </UpdateVariable>
+
+  金标准_首登场_双轨完整示例:
+    场景: 角色首次重要登场，第 0 楼尚无该角色
+    format: |-
+      <UpdateVariable>
+      <Analysis>Yangyang first scene; user awake at Yunling; set story fields, affection 60, full heroine + contact.</Analysis>
+      <JSONPatch>
+      [
+        { "op": "replace", "path": "/当前时间", "value": "今州历·云陵谷 08:30" },
+        { "op": "replace", "path": "/所在地点", "value": "瑝珑-今州·云陵谷·临溪草坡" },
+        { "op": "replace", "path": "/主角信息/当前状态", "value": "轻微擦伤，意识清醒，刚醒来" },
+        { "op": "replace", "path": "/主角信息/当前穿着", "value": "漂泊者常服，略有尘土" },
+        { "op": "replace", "path": "/当前长期目标", "value": "寻找丢失的记忆，跟随指引前往今州城。" },
+        { "op": "replace", "path": "/当前演绎事件", "value": "主线事件1：群星垂眸与云陵苏醒" },
+        { "op": "replace", "path": "/当前演绎事件节点", "value": "漂泊者在云陵谷苏醒，与秧秧初次接触" },
+        { "op": "replace", "path": "/即将进行的下一个事件节点", "value": "随巡尉离开云陵谷前往今州" },
+        { "op": "replace", "path": "/章节终止条件", "value": "漂泊者确认身份并离开云陵谷" },
+
+        {
+          "op": "add",
+          "path": "/contact/秧秧",
+          "value": {
+            "end_flag": "active",
+            "appearance": {
+              "height": "168cm",
+              "hair_color": "黑发挑染灰白",
+              "body_type": "纤细匀称",
+              "description": "灰棕色眼眸，右眼下有泪痣，气质温柔治愈。"
+            },
+            "clothing": {
+              "top": "海蓝色挂脖式紧身背心",
+              "bottom": "包臀短裙",
+              "stockings": "透肉黑色连体裤袜",
+              "accessories": "深蓝色贝雷帽"
+            },
+            "relationship": { "affection": 60, "sexual_desire": 0 },
+            "location_info": { "current_location": "瑝珑-今州·云陵谷", "is_nearby": true },
+            "sexual_experience": { "virgin": true, "sex_count": 0, "partner_count": 0 },
+            "physiological": {
+              "vaginal_lubrication": "干燥",
+              "nipple": "平软",
+              "clitoris": "正常",
+              "uterus": "正常",
+              "pregnancy": false
+            },
+            "interaction_records": "在云陵谷发现昏迷的 user，给予膝枕照顾。"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/女性角色/秧秧",
+          "value": {
+            "基础信息": {
+              "角色名字": "秧秧",
+              "身高": "168cm，裸高163cm",
+              "罩杯": "C罩杯",
+              "外貌": "灰棕色眼眸，右眼下有泪痣，气质温柔治愈。",
+              "是否为处女": true
+            },
+            "是否在场": "true",
+            "声痕位置": "额头上刘海之间，纵向分布",
+            "当前穿着": {
+              "上装": "海蓝色挂脖式紧身背心",
+              "下装": "包臀短裙",
+              "饰品": "深蓝色贝雷帽",
+              "其它": "透肉黑色连体裤袜"
+            },
+            "好感度": 60,
+            "额外信息": {
+              "角色称号": "温柔关切的守卫者",
+              "内心想法": "他的眼神……好迷茫。"
+            },
+            "特写": [
+              { "部位": "大腿", "描写": "被黑丝紧紧包裹，透出肌肤的温润" },
+              { "部位": "脸颊", "描写": "柔和的面庞带着关切" }
+            ],
+            "物品": "修长直刀",
+            "性爱状态": {
+              "是否正在性爱": false,
+              "高潮进度": 0,
+              "高潮计数": 0,
+              "_高潮次数上限": 5
+            },
+            "生理状态": {
+              "阴道润滑": "干燥",
+              "乳头状态": "平软",
+              "阴蒂状态": "正常",
+              "子宫状态": "正常",
+              "是否怀孕": false
+            },
+            "私密资料": {
+              "性交次数": 0,
+              "性伴侣数": 0,
+              "性爱经验": "无",
+              "偏爱玩法": "温柔顺从，连裤袜摩擦",
+              "持久痕迹": "无",
+              "性爱日志": []
+            }
+          }
+        },
+
+        { "op": "insert", "path": "/主角信息/物品栏/复苏合剂", "value": { "数量": 1, "描述": "应急药剂", "类型": "杂物" } },
+        { "op": "insert", "path": "/剧情触发器/-", "value": { "事件类别": "主线", "事件简述": "【明线】确认漂泊者身份", "状态": "进行中", "事件计时": "今州历 Day1 08:30" } },
+        { "op": "insert", "path": "/伏笔/-", "value": { "伏笔内容": "【暗线】天空海翻涌异常", "指向的预期结果": "与坠落事件相关" } }
+      ]
+      </JSONPatch>
+      </UpdateVariable>
+
+  首楼_骨架已存在_replace_示例:
+    场景: 开场面板已预置 女性角色.秧秧（好感度 10），首楼用 replace 补全
+    format: |-
+      <UpdateVariable>
+      <Analysis>User woke at Yunling; Yangyang present; fill skeleton fields and story progress.</Analysis>
+      <JSONPatch>
+      [
+        { "op": "replace", "path": "/当前时间", "value": "今州历·云陵谷 08:30" },
+        { "op": "replace", "path": "/所在地点", "value": "瑝珑-今州·云陵谷·临溪草坡" },
+        { "op": "replace", "path": "/主角信息/当前状态", "value": "轻微擦伤，意识清醒，刚醒来" },
+        { "op": "replace", "path": "/主角信息/当前穿着", "value": "漂泊者常服，略有尘土" },
+        { "op": "replace", "path": "/当前长期目标", "value": "弄清处境，与今州巡尉建立联系" },
+        { "op": "replace", "path": "/当前演绎事件", "value": "云陵谷苏醒" },
+        { "op": "replace", "path": "/当前演绎事件节点", "value": "与秧秧初次对话" },
+        { "op": "replace", "path": "/即将进行的下一个事件节点", "value": "随巡尉离开云陵谷" },
+        { "op": "replace", "path": "/章节终止条件", "value": "漂泊者确认身份并离开云陵谷" },
+        { "op": "replace", "path": "/女性角色/秧秧/好感度", "value": 15 },
+        { "op": "replace", "path": "/女性角色/秧秧/基础信息/外貌", "value": "浅紫短发，神情冷静，制式巡尉装束" },
+        { "op": "replace", "path": "/女性角色/秧秧/额外信息/内心想法", "value": "这人醒得比预想快……先确认有没有失忆。" },
+        { "op": "replace", "path": "/女性角色/秧秧/当前穿着/上装", "value": "今州巡尉制式上装" },
+        { "op": "replace", "path": "/女性角色/秧秧/当前穿着/下装", "value": "巡尉长裤" },
+        { "op": "replace", "path": "/女性角色/秧秧/生理状态/阴道润滑", "value": "干燥" },
+        { "op": "replace", "path": "/女性角色/秧秧/生理状态/乳头状态", "value": "平软" },
+        { "op": "replace", "path": "/女性角色/秧秧/生理状态/阴蒂状态", "value": "正常" },
+        { "op": "replace", "path": "/女性角色/秧秧/生理状态/子宫状态", "value": "正常" },
+        { "op": "replace", "path": "/女性角色/秧秧/生理状态/是否怀孕", "value": false },
+        { "op": "insert", "path": "/剧情触发器/-", "value": { "事件类别": "主线", "事件简述": "【明线】确认漂泊者身份", "状态": "进行中", "事件计时": "今州历·云陵谷 Day1 08:30" } },
+        { "op": "insert", "path": "/伏笔/-", "value": { "伏笔内容": "【暗线】天空海翻涌异常", "指向的预期结果": "与漂泊者坠落有关" } }
+      ]
+      </JSONPatch>
+      </UpdateVariable>
+
+  日常楼层_最小示例:
+    场景: 对话推进，仅好感与时间变化
+    format: |-
+      <UpdateVariable>
+      <Analysis>Short talk; affection +3; time +15min.</Analysis>
+      <JSONPatch>
+      [
+        { "op": "replace", "path": "/当前时间", "value": "今州历·云陵谷 08:45" },
+        { "op": "delta", "path": "/女性角色/秧秧/好感度", "value": 3 },
+        { "op": "delta", "path": "/女性角色/秧秧/性欲", "value": 2 },
+        { "op": "replace", "path": "/女性角色/秧秧/额外信息/内心想法", "value": "他好像开始信任我了。" }
+      ]
+      </JSONPatch>
+      </UpdateVariable>
+
+  亲密互动_手交场景_示例:
+    场景: 卡提希娅在场进行手交；GAL 已用 <z>卡提希娅<pic>手交</pic>（禁止写 mp4 文件名）
+    说明: 此场景**必须**在 </gal> 与 StatusPlaceHolderImpl 之后输出下列块，不可截断
+    format: |-
+      <StatusPlaceHolderImpl/>
+      <UpdateVariable>
+      <Analysis>Cartethyia handjob scene; sex status active; arousal up; affection +5; physiological update.</Analysis>
+      <JSONPatch>
+      [
+        { "op": "replace", "path": "/当前时间", "value": "第1年 1月1日 周一 14:45" },
+        { "op": "replace", "path": "/主角信息/当前状态", "value": "半勃至勃起，正在接受手交" },
+        { "op": "replace", "path": "/女性角色/卡提希娅/性爱状态/是否正在性爱", "value": true },
+        { "op": "replace", "path": "/女性角色/卡提希娅/性爱状态/高潮进度", "value": 35 },
+        { "op": "replace", "path": "/女性角色/卡提希娅/额外信息/内心想法", "value": "脸好烫……节奏终于稳下来了。他怎么还直勾勾的……" },
+        { "op": "replace", "path": "/女性角色/卡提希娅/生理状态/阴道润滑", "value": "轻微湿润" },
+        { "op": "replace", "path": "/女性角色/卡提希娅/生理状态/乳头状态", "value": "微微挺立" },
+        { "op": "replace", "path": "/女性角色/卡提希娅/生理状态/阴蒂状态", "value": "敏感" },
+        { "op": "delta", "path": "/女性角色/卡提希娅/好感度", "value": 5 },
+        { "op": "delta", "path": "/女性角色/卡提希娅/性欲", "value": 8 }
+      ]
+      </JSONPatch>
+      </UpdateVariable>
+
+  破处场景_示例:
+    场景: 秧秧初次性交；GAL 已用 <z>秧秧<pic>破处</pic>…</z>
+    说明: **同条回复必写** 是否为处女 → false；性交次数/性伴侣数在**破处射精或事后结束**楼层再 +1
+    format: |-
+      <StatusPlaceHolderImpl/>
+      <UpdateVariable>
+      <Analysis>First intercourse with Yangyang; virginity lost; sex active; physiological update; affection up.</Analysis>
+      <JSONPatch>
+      [
+        { "op": "replace", "path": "/当前时间", "value": "今州历·云陵谷 23:15" },
+        { "op": "replace", "path": "/女性角色/秧秧/基础信息/是否为处女", "value": false },
+        { "op": "replace", "path": "/女性角色/秧秧/性爱状态/是否正在性爱", "value": true },
+        { "op": "replace", "path": "/女性角色/秧秧/性爱状态/高潮进度", "value": 55 },
+        { "op": "replace", "path": "/女性角色/秧秧/额外信息/内心想法", "value": "好痛……但不想让他停下来……" },
+        { "op": "replace", "path": "/女性角色/秧秧/生理状态/阴道润滑", "value": "湿润" },
+        { "op": "replace", "path": "/女性角色/秧秧/生理状态/乳头状态", "value": "微微挺立" },
+        { "op": "replace", "path": "/女性角色/秧秧/生理状态/阴蒂状态", "value": "敏感" },
+        { "op": "replace", "path": "/女性角色/秧秧/私密资料/性爱经验", "value": "已与漂泊者初次性交" },
+        { "op": "insert", "path": "/女性角色/秧秧/私密资料/性爱日志/-", "value": { "时间": "今州历·云陵谷 23:15", "内容": "破处", "结果": "进行中" } },
+        { "op": "delta", "path": "/女性角色/秧秧/好感度", "value": 8 }
+      ]
+      </JSONPatch>
+      </UpdateVariable>
+
+  性爱事后_完结_示例:
+    场景: 正常位做爱射精或「做爱事后结束」；一次完整性交 session 结束
+    说明: 同条必 delta 性交次数 +1；若与 user 首次性交且性伴侣数仍为 0，replace 性伴侣数为 1
+    format: |-
+      <StatusPlaceHolderImpl/>
+      <UpdateVariable>
+      <Analysis>Intercourse finished with Yangyang; sex count +1; partner count set to 1; aftercare.</Analysis>
+      <JSONPatch>
+      [
+        { "op": "replace", "path": "/女性角色/秧秧/性爱状态/是否正在性爱", "value": false },
+        { "op": "replace", "path": "/女性角色/秧秧/性爱状态/高潮进度", "value": 0 },
+        { "op": "delta", "path": "/女性角色/秧秧/私密资料/性交次数", "value": 1 },
+        { "op": "replace", "path": "/女性角色/秧秧/私密资料/性伴侣数", "value": 1 },
+        { "op": "insert", "path": "/女性角色/秧秧/私密资料/性爱日志/-", "value": { "时间": "今州历·云陵谷 23:40", "内容": "正常位", "结果": "射精完结" } },
+        { "op": "replace", "path": "/女性角色/秧秧/额外信息/内心想法", "value": "身体还在发烫……不想让他看见我这副样子。" },
+        { "op": "replace", "path": "/主角信息/当前状态", "value": "高潮后脱力，呼吸渐平" }
+      ]
+      </JSONPatch>
+      </UpdateVariable>
+
+  仅MVU_不写contact_示例:
+    说明: 只 add /女性角色/{名} 亦可驱动好友列表与 🩺 生理状态（自动映射）
+    HeroineEntry_value: 使用「变量列表 → HeroineEntry_完整模板」，必须含 生理状态 全部 5 个子键
+
+  常见错误_禁止:
+    - **在 StatusPlaceHolderImpl 处结束回复、缺少 UpdateVariable**（手机/MVU 完全不更新）
+    - 缺少 <UpdateVariable> 或 JSON 语法错误（MVU 不更新）
+    - GAL pic 写 i75k8e.mp4 / catbox 链接（须写 手交、日常 等场景名）
+    - path: "/stat_data/当前时间"（错误前缀）
+    - 自创 path: "/角色好感/秧秧"
+    - value: "等待AI填入"
+    - 首楼章节字段留空 ""
+    - add 女性角色 但缺少 生理状态 / 性爱状态 / 私密资料 子对象
+    - GAL `<z>` 内角色名 与 path /女性角色/{名} 必须一致；**女性角色禁止** `<other>` / `<j>`
+    - **破处后仍为处女**：输出 `<pic>破处</pic>` 却未 replace /女性角色/{名}/基础信息/是否为处女 为 false
+    - **完整性交后性交次数未增加**：须 delta /女性角色/{名}/私密资料/性交次数；禁止用高潮计数代替
+    - **首次性交后性伴侣数仍为 0**：须 replace /女性角色/{名}/私密资料/性伴侣数
+    - **乳头状态写「勃起」**：应写 平软/正常/微微挺立/挺立（「勃起」仅用于男性）
+
+  解析与界面:
+    - Mvu.parseMessage 校验；鸣潮变量结构脚本 zod prefault 补缺字段
+    - 手机合并**最新** JSONPatch；勿只写 GAL 占位而漏 replace 剧情字段
+    - 人际关系粉色 ❤ 来自 女性角色.{名}.好感度
+    - 详见：MVU格式要求 · 变量列表 · 变量更新规则 · 完整首楼回复示例 · 日常亲密场景完整输出示例 · 小爱界面完整输出示例

@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<style>
+    :root {
+        /* === 核心变量 === */
+        --glass-bg: rgba(15, 20, 30, 0.92);
+        --glass-blur: 16px;
+        --radius: 12px;
+        
+        /* 字体色 */
+        --text-main: #f1f5f9;
+        --text-sub: #94a3b8;
+        --font-base: 12px;
+        --font-small: 11px;
+        --font-title: 15px;
+    }
+
+    /* === 四色主题定义 === */
+    .theme-blue   { --accent-color: #38bdf8; --accent-bright: #bae6fd; --accent-dim: rgba(56, 189, 248, 0.15); --accent-border: rgba(56, 189, 248, 0.3); --text-hl: #7dd3fc; --grad-start: #38bdf8; --grad-end: #bae6fd; }
+    .theme-purple { --accent-color: #d8b4fe; --accent-bright: #f3e8ff; --accent-dim: rgba(216, 180, 254, 0.12); --accent-border: rgba(216, 180, 254, 0.3); --text-hl: #e9d5ff; --grad-start: #d8b4fe; --grad-end: #f3e8ff; }
+    .theme-pink   { --accent-color: #ffadd2; --accent-bright: #fff0f6; --accent-dim: rgba(255, 173, 210, 0.15); --accent-border: rgba(255, 173, 210, 0.4); --text-hl: #ffc2e0; --heart-color: #ff8fa3; --grad-start: #ffadd2; --grad-end: #ffe4f0; }
+    .theme-green  { --accent-color: #2dd4bf; --accent-bright: #99f6e4; --accent-dim: rgba(45, 212, 191, 0.15); --accent-border: rgba(45, 212, 191, 0.3); --text-hl: #5eead4; --grad-start: #2dd4bf; --grad-end: #ccfbf1; }
+
+    body {
+        margin: 0; padding: 0;
+        font-family: 'Microsoft YaHei', sans-serif;
+        font-size: var(--font-base);
+        color: var(--text-main);
+        background: transparent;
+        line-height: 1.3;
+    }
+
+    .txt-gradient {
+        background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+        font-weight: bold;
+    }
+
+    /* === 主容器 === */
+    .tide-card {
+        width: 100%;
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--accent-border);
+        border-radius: var(--radius);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        display: flex; flex-direction: column;
+        overflow: hidden; 
+        margin-bottom: 12px;
+        transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    /* === Header === */
+    .tide-header {
+        padding: 8px 12px;
+        background: linear-gradient(90deg, var(--accent-dim), transparent);
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        display: flex; justify-content: space-between; align-items: flex-start;
+        min-height: 36px; flex-shrink: 0; flex-wrap: wrap; gap: 8px;
+        transition: background 0.4s ease;
+        cursor: pointer;
+    }
+    
+    .loc-box {
+        font-size: 11px; color: var(--text-sub); display: flex; align-items: center; gap: 4px;
+        flex: 1 1 auto; word-break: break-word; padding-top: 2px;
+    }
+    
+    /* 顶部右侧容器：包含时间和开关 */
+    .header-right {
+        display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; flex: 1 0 auto;
+    }
+
+    .time-badge {
+        font-family: monospace; color: var(--accent-bright);
+        background: rgba(0,0,0,0.3); padding: 2px 4px; border-radius: 4px; 
+        border: 1px solid var(--accent-border); font-size: 11px;
+        flex: 0 0 auto; white-space: nowrap;
+    }
+
+    /* === 玻璃态 Toggle 开关 === */
+    .glass-toggle {
+        width: 32px; height: 16px;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 20px;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        flex-shrink: 0;
+    }
+    /* 滑块 */
+    .glass-toggle .toggle-circle {
+        width: 12px; height: 12px;
+        background: var(--text-sub);
+        border-radius: 50%;
+        position: absolute;
+        top: 1px; left: 2px;
+        transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        opacity: 0.8;
+    }
+    /* 激活状态 */
+    .glass-toggle.active {
+        background: var(--accent-dim);
+        border-color: var(--accent-color);
+        box-shadow: 0 0 5px var(--accent-dim);
+    }
+    .glass-toggle.active .toggle-circle {
+        left: 16px; /* 移动滑块 */
+        background: var(--accent-bright);
+        opacity: 1;
+        box-shadow: 0 0 3px var(--accent-color);
+    }
+    .glass-toggle:hover {
+        border-color: var(--accent-bright);
+    }
+
+    /* === 内容视口 === */
+    .tide-viewport {
+        height: 0; 
+        padding: 0 10px;
+        opacity: 0;
+        overflow-y: hidden; 
+        overflow-x: hidden;
+        position: relative;
+        transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    }
+    .tide-card.expanded .tide-viewport { height: 380px; padding: 10px; opacity: 1; overflow-y: auto; }
+
+    .tab-page { display: none; animation: slideIn 0.3s ease; }
+    .tab-page.active { display: block; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* === 通用组件 === */
+    .data-block {
+        background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 6px; padding: 8px 10px; margin-bottom: 8px;
+    }
+    .block-header {
+        font-size: var(--font-title);
+        background: linear-gradient(90deg, var(--grad-start), var(--grad-end));
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+        font-weight: 900; margin-bottom: 6px; padding-bottom: 4px;
+        border-bottom: 1px solid var(--accent-border);
+        letter-spacing: 0.5px; line-height: 1.2;
+    }
+    .edit-hint {
+        font-size: 10px; font-weight: normal; color: var(--accent-color); 
+        opacity: 0.7; margin-left: 8px; vertical-align: middle;
+        text-shadow: none; letter-spacing: 0;
+    }
+
+    .row { display: flex; margin-bottom: 4px; font-size: var(--font-base); line-height: 1.4; align-items: baseline; }
+    .label {
+        color: var(--text-sub); width: auto; min-width: 55px; max-width: 80px; flex-shrink: 0;
+        font-size: var(--font-small); margin-right: 6px;
+        background: linear-gradient(90deg, rgba(255,255,255,0.03), transparent);
+        padding: 0 3px; border-radius: 3px;
+    }
+    .val { color: var(--text-main); flex: 1; word-break: break-all; font-size: 12px; }
+    .val.hl { 
+        background: linear-gradient(135deg, var(--grad-start), var(--grad-end));
+        -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: bold; 
+    }
+
+    /* === 可编辑项通用样式 === */
+    .editable-text {
+        cursor: pointer; transition: 0.2s ease; border-radius: 3px; padding: 0 2px;
+        border-bottom: 1px dashed rgba(255,255,255,0.3); display: inline;
+    }
+    .editable-text:hover {
+        background: rgba(255, 255, 255, 0.1); color: var(--accent-bright);
+        border-bottom-color: var(--accent-color); text-shadow: 0 0 5px var(--accent-dim);
+    }
+    .editable-heart {
+        cursor: pointer; transition: 0.2s ease; border-radius: 4px; padding: 0 2px;
+        border-bottom: 1px dashed rgba(251, 113, 133, 0.4);
+    }
+    .editable-heart:hover { background: rgba(255, 255, 255, 0.1); transform: scale(1.1); text-shadow: 0 0 8px var(--heart-color); }
+
+    .grid-2-col { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 4px; }
+    .item-tag { font-size: 11px; padding: 2px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #e2e8f0; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+    .item-tag:hover { background: rgba(255,255,255,0.15); border-color: var(--accent-color); }
+
+    /* === 性爱监控 === */
+    .sex-monitor-box { background: rgba(0,0,0,0.3); border: 1px solid var(--accent-border); border-radius: 6px; padding: 6px; margin-bottom: 8px; animation: pulse 2s infinite; }
+    @keyframes pulse { 50% { border-color: var(--accent-bright); } }
+    .sex-row { margin-bottom: 4px; font-size: 11px; }
+    .progress-track { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin-top: 2px; }
+    .progress-bar { height: 100%; transition: width 0.3s; }
+    .pb-user { background: linear-gradient(90deg, #93c5fd, #e0f2fe); box-shadow: 0 0 8px #93c5fd; }
+    .pb-fem { background: linear-gradient(90deg, #f9a8d4, #fce7f3); box-shadow: 0 0 8px #f9a8d4; }
+
+    /* === 角色栏 === */
+    .char-scroll-nav { 
+        display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 8px; 
+        scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent; 
+    }
+    .char-scroll-nav::-webkit-scrollbar { height: 4px; }
+    .char-scroll-nav::-webkit-scrollbar-track { background: transparent; }
+    .char-scroll-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+    .char-scroll-nav::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
+
+    .char-pill {
+        flex-shrink: 0; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+        padding: 3px 10px; border-radius: 50px; cursor: pointer; font-size: 12px; color: var(--text-sub); transition: 0.2s;
+        display: flex; align-items: center; gap: 4px;
+    }
+    .char-pill.active { background: rgba(255,255,255,0.1); color: var(--accent-bright); border-color: var(--accent-color); font-weight: bold; box-shadow: 0 0 8px var(--accent-dim); opacity: 1 !important; }
+    .heart-icon { color: var(--heart-color); margin-left: 0; }
+
+    /* 角色Header重构：改为纵向布局适应移动端 */
+    .char-hero-header { display: flex; flex-direction: column; margin-bottom: 8px; gap: 4px; }
+    .char-header-top { display: flex; width: 100%; align-items: center; }
+    .char-header-bottom { display: flex; align-items: center; width: 100%; flex-wrap: wrap; gap: 6px; }
+
+    .giant-name { font-size: 22px; font-weight: 900; background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 15px var(--accent-dim); line-height: 1.2; }
+    .sub-title { font-size: 11px; color: var(--accent-bright); opacity: 0.9; padding: 1px 6px; background: var(--accent-dim); border-radius: 3px; display: inline-block; vertical-align: middle; }
+    
+    .reset-btn {
+        font-size: 11px; cursor: pointer; color: var(--text-sub);
+        background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 4px; padding: 2px 6px; transition: 0.2s ease; display: inline-flex; align-items: center; gap: 3px;
+    }
+    .reset-btn:hover { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; box-shadow: 0 0 8px rgba(239, 68, 68, 0.2); }
+    
+    .header-heart-container { margin-left: auto; display: flex; align-items: center; }
+
+    .psych-box { background: rgba(0,0,0,0.2); border-left: 2px solid var(--accent-color); padding: 8px; margin-bottom: 8px; border-radius: 0 4px 4px 0; font-size: 12px; line-height: 1.4; color: #ddd; font-style: italic; }
+    .status-row { display: flex; gap: 6px; margin-bottom: 10px; }
+    .status-badge { flex: 1; text-align: center; padding: 4px; border-radius: 4px; font-size: 11px; font-weight: bold; border: 1px solid transparent; }
+    
+    /* 可点击的 Badge */
+    .clickable-badge { cursor: pointer; transition: 0.2s ease; position: relative; overflow: hidden; }
+    .clickable-badge:hover { filter: brightness(1.2); box-shadow: 0 0 8px inset rgba(255,255,255,0.1); }
+    .clickable-badge:active { transform: scale(0.98); }
+
+    .st-online { background: rgba(74, 222, 128, 0.1); color: #4ade80; border-color: rgba(74, 222, 128, 0.2); }
+    .st-offline { background: rgba(255, 255, 255, 0.05); color: #94a3b8; border-color: rgba(255, 255, 255, 0.1); }
+    .st-sex { background: rgba(244, 114, 182, 0.1); color: #f472b6; border-color: rgba(244, 114, 182, 0.2); animation: pulse 2s infinite; }
+
+    .basic-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 10px; }
+    .basic-cell { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; padding: 4px 2px; text-align: center; }
+    .bc-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; }
+    .bc-val { font-size: 11px; color: #fff; font-weight: bold; }
+
+    .wear-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 8px; margin-bottom: 10px; }
+    .wb-list { margin-top: 4px; display: flex; flex-direction: column; gap: 2px; }
+
+    .bottom-split { display: flex; flex-direction: column; gap: 8px; }
+    .split-card { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 8px; }
+    .sc-title { font-size: 12px; font-weight: bold; background: linear-gradient(90deg, var(--grad-start), var(--grad-end)); -webkit-background-clip: text; background-clip: text; color: transparent; border-bottom: 1px dashed var(--accent-border); padding-bottom: 3px; margin-bottom: 6px; }
+    .sc-content { font-size: 11px; line-height: 1.5; color: #cbd5e1; }
+    .kv-row { display: flex; margin-bottom: 2px; }
+    .hl-key { color: var(--accent-color); font-weight: bold; margin-right: 4px; white-space: nowrap; }
+    .hl-part { color: var(--text-hl); font-weight: bold; margin-right: 4px; white-space: nowrap; }
+    
+    /* 日志操作按钮 */
+    .log-btn { cursor: pointer; opacity: 0.6; margin-left: 6px; font-size: 10px; transition: 0.2s; }
+    .log-btn:hover { opacity: 1; transform: scale(1.1); }
+    .log-btn.del:hover { color: #fca5a5; }
+    .log-btn.edit:hover { color: var(--accent-bright); }
+    
+    /* 小叉号删除按钮 (用于触发器/日志) */
+    .small-x-btn { font-family: sans-serif; cursor: pointer; color: rgba(255,255,255,0.4); margin-left:6px; transition:0.2s; }
+    .small-x-btn:hover { color: #fca5a5; transform: scale(1.1); }
+
+    /* === 选项按钮 === */
+    .opt-btn { padding: 12px; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e2e8f0; cursor: pointer; font-size: 13px; line-height: 1.4; transition: 0.2s; position: relative; overflow: hidden; margin-bottom: 6px; }
+    .opt-btn:hover { border-color: var(--accent-color); background: rgba(255,255,255,0.05); transform: translateX(3px); }
+    .opt-btn.active { border-color: var(--accent-color); background: rgba(255,255,255,0.1); color: #fff; box-shadow: inset 0 0 10px rgba(45, 212, 191, 0.1); }
+
+    /* === 底部导航 === */
+    .tide-nav { height: 44px; display: flex; background: transparent; border-top: none; transition: background 0.4s ease; }
+    .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: var(--text-sub); font-size: 10px; gap: 2px; transition: 0.3s; border-top: 3px solid transparent; }
+    .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.03); }
+    .nav-btn.active { color: var(--accent-color); background: linear-gradient(to top, var(--accent-dim), transparent); border-top-color: var(--accent-color); }
+    .nav-icon { font-size: 16px; }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
+
+    /* === 小爱手机内嵌：仅展示单一 Tab，功能与 regex 浪潮状态栏一致 === */
+    .tide-card.phone-mode {
+        margin: 0;
+        border-radius: 0;
+        border: none;
+        height: 100%;
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 0;
+    }
+    .tide-card.phone-mode .tide-header { cursor: default; flex-shrink: 0; }
+    .tide-card.phone-mode.expanded .tide-viewport {
+        height: auto !important;
+        flex: 1;
+        min-height: 0;
+        opacity: 1 !important;
+        padding: 10px !important;
+        overflow-y: auto !important;
+    }
+    .tide-card.phone-mode .tide-nav { display: none !important; }
+
+    /* 小爱内嵌：不依赖 JS，避免出现黑屏 + 底部三 Tab */
+    html.wuwa-phone-embed, html.wuwa-phone-embed body {
+        height: 100%;
+        min-height: 100%;
+        margin: 0;
+        overflow: hidden;
+    }
+    html.wuwa-phone-embed .tide-card {
+        margin: 0;
+        border-radius: 0;
+        border: none;
+        height: 100%;
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 0;
+    }
+    html.wuwa-phone-embed .tide-header { cursor: default; flex-shrink: 0; }
+    html.wuwa-phone-embed .tide-viewport {
+        height: auto !important;
+        flex: 1;
+        min-height: 0;
+        opacity: 1 !important;
+        padding: 10px !important;
+        overflow-y: auto !important;
+    }
+    html.wuwa-phone-embed .tide-nav { display: none !important; visibility: hidden !important; height: 0 !important; overflow: hidden !important; }
+    html.wuwa-phone-embed #page-opt { display: none !important; }
+    html.wuwa-phone-embed[data-tide-tab="page-user"] #page-story { display: none !important; }
+    html.wuwa-phone-embed[data-tide-tab="page-story"] #page-user { display: none !important; }
+    html.wuwa-phone-embed[data-tide-tab="page-story"] .tab-page.active { display: block !important; }
+    html.wuwa-phone-embed[data-tide-tab="page-user"] .tab-page.active { display: block !important; }
+</style>
+
+<script type="module">
+    let lastActiveTabBtn = null;
+    let currentActiveChar = null;
+    let isInjectionEnabled = false;
+
+    // --- 页面渲染缓存标记 ---
+    let tabRendered = { 'page-user': false, 'page-story': false, 'page-opt': false };
+    let renderDebounceTimer = null;
+
+    function getInjSuffix() {
+        return isInjectionEnabled 
+            ? "\n\n(提示词注入开关【已开】：修改将直接通知AI。如需静默修改请在右上角关闭开关)" 
+            : "\n\n(当前为静默调整，不会通知AI。⚠️ 注意：如果是重置角色条目、重大改动，请务必先打开右上角开关，否则AI可能会无视修改！)";
+    }
+
+    function parseOptions(text) {
+        try {
+            if (!text) return [];
+            const match = text.match(/(?:<options>|<selection>)([\s\S]*?)(?:<\/options>|<\/selection>)/i);
+            if (!match || !match[1] || !match[1].trim()) return [];
+            const lines = match[1].trim().split(/\r?\n/);
+            return lines.filter(l => l && (l.includes('<font') || l.includes('color='))).map(line => {
+                try {
+                    const tmp = document.createElement('div'); tmp.innerHTML = line;
+                    const clean = (tmp.textContent || '').replace(/[\u{1F600}-\u{1F64F}]/gu, '').trim();
+                    return { html: line, text: clean };
+                } catch (e) { return null; }
+            }).filter(item => item !== null);
+        } catch (err) { return []; }
+    }
+
+    function cleanInputText(text) {
+        if (!text) return '';
+        const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{2300}-\u{23FF}]/gu;
+        return text.replace(/\s+/g, '').replace(emojiRegex, '');
+    }
+
+    function getData() {
+        try {
+            if (typeof getAllVariables === 'function') {
+                const sd = getAllVariables()?.stat_data;
+                if (sd && Object.keys(sd).length) return sd;
+            }
+        } catch (e) {}
+        try {
+            if (window.parent?.getAllVariables) {
+                const sd = window.parent.getAllVariables()?.stat_data;
+                if (sd && Object.keys(sd).length) return sd;
+            }
+        } catch (e) {}
+        try {
+            if (window.top?.getAllVariables) {
+                const sd = window.top.getAllVariables()?.stat_data;
+                if (sd && Object.keys(sd).length) return sd;
+            }
+        } catch (e) {}
+        return {};
+    }
+
+    function tryApplyStoryLogic(stat_data) {
+        let fn = null;
+        try { if (typeof calculateStoryLogic === 'function') fn = calculateStoryLogic; } catch(e){}
+        if (!fn) try { if (typeof window !== 'undefined' && window.calculateStoryLogic) fn = window.calculateStoryLogic; } catch(e){}
+        if (!fn) try { if (typeof globalThis !== 'undefined' && globalThis.calculateStoryLogic) fn = globalThis.calculateStoryLogic; } catch(e){}
+        if (!fn) try { if (typeof top !== 'undefined' && top.calculateStoryLogic) fn = top.calculateStoryLogic; } catch(e){}
+        if (!fn) try { if (typeof parent !== 'undefined' && parent.calculateStoryLogic) fn = parent.calculateStoryLogic; } catch(e){}
+
+        if (typeof fn === 'function') {
+            try { return fn(stat_data); } 
+            catch (e) { console.warn("[StatusBar] Story Logic Sync Failed:", e); return stat_data; }
+        }
+        return stat_data;
+    }
+
+    window.toggleInjection = function(e) {
+        if(e) e.stopPropagation();
+        isInjectionEnabled = !isInjectionEnabled;
+        const btn = $('#inj-toggle-btn');
+        if (isInjectionEnabled) btn.addClass('active');
+        else btn.removeClass('active');
+        if (typeof toastr !== 'undefined') toastr.info(isInjectionEnabled ? "已开启变量修改提示词注入" : "已关闭变量修改提示词注入，当前为静默模式");
+    };
+
+    window.injectChangePrompt = function(msg) {
+        if (!isInjectionEnabled) return;
+        let inp = window.parent?.document?.querySelector('#send_textarea') || document.querySelector('#send_textarea');
+        if (inp) {
+            const promptText = `\n[系统最高优先级指令（状态变量强制变更）：${msg}]`;
+            const cur = inp.value.trim();
+            inp.value = cur ? `${cur}${promptText}` : promptText.trim();
+            inp.dispatchEvent(new Event('input', { bubbles: true }));
+            inp.focus();
+        }
+    };
+
+    // ==========================================
+    // 变量修改相关方法（传递最新 mvuData 进行即时渲染）
+    // ==========================================
+    window.manageItem = async function(name) {
+        const d = getData(); const bag = d.主角信息?.物品栏 || {}; const item = bag[name]; if (!item) return;
+        const act = prompt(`【${name}】\n📦 类型: ${item.类型 || '杂物'}\n🔢 数量: ${item.数量}\n📝 描述: ${item.描述 || '无描述'}\n\n请输入数字进行操作：\n1. 修改数量/描述\n2. 删除此物品${getInjSuffix()}`, "");
+        if (act === '1') {
+            const newCount = prompt(`修改【${name}】的数量:`, item.数量); if (newCount === null) return;
+            const newDesc = prompt(`修改【${name}】的描述:`, item.描述); if (newDesc === null) return;
+            try {
+                let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+                mvuData.stat_data.主角信息.物品栏[name].数量 = Number(newCount);
+                mvuData.stat_data.主角信息.物品栏[name].描述 = newDesc;
+                mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+                await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+                injectChangePrompt(`玩家手动修改了物品栏中【${name}】的信息。当前数量为：${newCount}，描述更新为：“${newDesc}”。`);
+                render(mvuData.stat_data);
+            } catch(e) { console.error(e); }
+        } else if (act === '2') {
+            if (!confirm(`确定要彻底删除物品【${name}】吗？此操作不可恢复！`)) return;
+            try {
+                let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+                delete mvuData.stat_data.主角信息.物品栏[name];
+                mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+                await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+                injectChangePrompt(`玩家手动从物品栏中遗弃/删除了物品【${name}】。主角失去了该物品。`);
+                if (typeof toastr !== 'undefined') toastr.success(`已删除物品：${name}`);
+                render(mvuData.stat_data);
+            } catch(e) { console.error(e); }
+        }
+    }
+
+    window.addItem = async function() {
+        const newName = prompt(`请输入要添加的新物品名称：${getInjSuffix()}`); if (!newName) return;
+        const newType = prompt("请输入物品类型 (如: 杂物, 武器, 道具):", "杂物"); if (newType === null) return;
+        const newCount = prompt("请输入物品数量:", "1"); if (newCount === null) return;
+        const newDesc = prompt("请输入物品描述:"); if (newDesc === null) return;
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            if (!mvuData.stat_data.主角信息) mvuData.stat_data.主角信息 = {};
+            if (!mvuData.stat_data.主角信息.物品栏) mvuData.stat_data.主角信息.物品栏 = {};
+            mvuData.stat_data.主角信息.物品栏[newName] = { 数量: Number(newCount), 描述: newDesc, 类型: newType };
+            mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+            await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+            injectChangePrompt(`玩家通过现实干涉向主角的物品栏中添加了新物品：【${newName}】(数量:${newCount}, 类型:${newType}, 描述:${newDesc})。请根据此物品的出现合理安排剧情。`);
+            if (typeof toastr !== 'undefined') toastr.success(`已添加物品：${newName}`);
+            render(mvuData.stat_data);
+        } catch(e) { console.error(e); }
+    }
+
+    window.editStoryVar = async function(key, label) {
+        const d = getData(); const currentVal = d[key] || '';
+        let newVal = prompt(`修改${label}：${getInjSuffix()}`, currentVal); if (newVal === null) return;
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            mvuData.stat_data[key] = newVal;
+            mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+            await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+            injectChangePrompt(`玩家将${label}手动修改为了“${newVal}”。`);
+            render(mvuData.stat_data);
+        } catch(e) { console.error(e); }
+    }
+
+    window.resetClothing = async function(charName) {
+        if (!confirm(`确定要清空【${charName}】当前的着装，并指示AI重新撰写吗？${getInjSuffix()}`)) return;
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            mvuData.stat_data.女性角色[charName].当前穿着 = { 上装: '等待AI填入', 下装: '等待AI填入', 饰品: '等待AI填入', 其它: '等待AI填入' };
+            mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+            await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+            injectChangePrompt(`玩家重置了【${charName}】的着装信息。请以角色条目中的默认着装为基础，根据她目前的实际情况、所在环境以及刚刚发生的剧情，为她重新生成服装变量（上装、下装、饰品等），并更新到相应的变量中。`);
+            if (typeof toastr !== 'undefined') toastr.success(`已重置 ${charName} 的着装`);
+            render(mvuData.stat_data);
+        } catch(e) { console.error(e); }
+    }
+
+    window.resetFeatures = async function(charName) {
+        if (!confirm(`确定要清空【${charName}】的特写描绘，并指示AI重新观察撰写吗？${getInjSuffix()}`)) return;
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            mvuData.stat_data.女性角色[charName].特写 = [];
+            mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+            await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+            injectChangePrompt(`玩家清空了【${charName}】的特写描绘列表。请仔细观察该角色当前的身体状态、神态、或者衣着细节，提取3个最引人注目或者最色情的部位，并重新填入变量列表中。`);
+            if (typeof toastr !== 'undefined') toastr.success(`已清空 ${charName} 的特写`);
+            render(mvuData.stat_data);
+        } catch(e) { console.error(e); }
+    }
+
+    window.editAffection = async function(charName) {
+        const d = getData(); const currentVal = d.女性角色?.[charName]?.好感度 || 0;
+        let newVal = prompt(`请输入【${charName}】的新好感度：${getInjSuffix()}`, currentVal);
+        if (newVal === null) return; newVal = parseInt(newVal); if (isNaN(newVal)) return alert("请输入有效数字！");
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            if (!mvuData?.stat_data?.女性角色?.[charName]) return;
+            mvuData.stat_data.女性角色[charName].好感度 = newVal;
+            mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+            await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+            injectChangePrompt(`玩家将角色【${charName}】的好感度强制修改为了“${newVal}”。如果好感度发生剧烈变化，请让该角色表现出态度的急转弯并在接下来的行动中体现出来。`);
+            if (typeof toastr !== 'undefined') toastr.success(`已更新 ${charName} 好感度`);
+            render(mvuData.stat_data);
+        } catch(e) { console.error(e); }
+    }
+
+    window.editGoal = async function() {
+        const d = getData(); const currentVal = d.当前长期目标 || '';
+        let newVal = prompt(`请输入新的长期目标：${getInjSuffix()}`, currentVal); if (newVal === null) return;
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            mvuData.stat_data.当前长期目标 = newVal;
+            mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+            await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+            injectChangePrompt(`玩家将当前的长期目标从“${currentVal}”修改为了“${newVal}”。请围绕这一新目标展开叙事和行动指引。`);
+            render(mvuData.stat_data);
+        } catch(e) { console.error(e); }
+    }
+
+    window.editUserField = async function(field) {
+        const d = getData(); const u = d.主角信息 || {}; const currentVal = u[field] || '';
+        let newVal = prompt(`修改主角的【${field}】：${getInjSuffix()}`, currentVal); if (newVal === null) return;
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            if(!mvuData.stat_data.主角信息) mvuData.stat_data.主角信息 = {};
+            mvuData.stat_data.主角信息[field] = newVal;
+            mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+            await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+            injectChangePrompt(`玩家通过现实干涉将主角的【${field}】从“${currentVal}”修改为了“${newVal}”。请让在场角色对此做出真实反应！`);
+            render(mvuData.stat_data);
+        } catch(e) { console.error(e); }
+    }
+
+    window.editUserGender = async function() {
+        const d = getData(); const currentVal = d.主角信息?.性别 || '男'; const newGender = currentVal === '男' ? '女' : '男';
+        if(!confirm(`是否使用现实扭曲将其强制变性为：${newGender}？${getInjSuffix()}`)) return;
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            if(!mvuData.stat_data.主角信息) mvuData.stat_data.主角信息 = {};
+            mvuData.stat_data.主角信息.性别 = newGender;
+            mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+            await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+            injectChangePrompt(`【警告：主角发生了变性！】玩家强制将主角的【性别】修改为了“${newGender}”！`);
+            render(mvuData.stat_data);
+        } catch(e) { console.error(e); }
+    }
+
+    window.editUserRover = async function() {
+        const d = getData(); const isRover = String(d.主角信息?.是否是漂泊者) === 'true'; const newVal = !isRover;
+        if(!confirm(`是否将其修改为：${newVal?'是':'否'}？${getInjSuffix()}`)) return;
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            if(!mvuData.stat_data.主角信息) mvuData.stat_data.主角信息 = {};
+            mvuData.stat_data.主角信息.是否是漂泊者 = newVal;
+            mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+            await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+            injectChangePrompt(`玩家将主角【是否为漂泊者】的身份设定修改为了“${newVal?'是':'否'}”。`);
+            render(mvuData.stat_data);
+        } catch(e) { console.error(e); }
+    }
+
+    window.toggleUserSexStatus = async function() {
+        const d = getData(); const uSex = d.主角信息?.性爱状态 || {}; const isSex = String(uSex.是否正在性爱) === 'true'; const newVal = !isSex;
+        if(!confirm(`是否强制切换为：${newVal ? '🔞 性爱中' : '✅ 正常'}？${getInjSuffix()}`)) return;
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            if(!mvuData.stat_data.主角信息) mvuData.stat_data.主角信息 = {};
+            if(!mvuData.stat_data.主角信息.性爱状态) mvuData.stat_data.主角信息.性爱状态 = {};
+            mvuData.stat_data.主角信息.性爱状态.是否正在性爱 = newVal;
+            mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+            await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+            if(newVal) injectChangePrompt(`【系统强制指令】玩家已将主角强制判定为【进入性爱状态】。`);
+            else injectChangePrompt(`【系统强制指令】玩家已将主角强制判定为【脱离性爱状态】。`);
+            render(mvuData.stat_data);
+        } catch(e) { console.error(e); }
+    }
+
+    window.editNPCRover = async function() {
+        const d = getData(); const exists = String(d.NPC漂泊者?.是否存在) === 'true'; const gender = d.NPC漂泊者?.性别 || '未知';
+        let newExists = exists; let newGender = gender;
+        if (!exists) {
+            if(confirm(`NPC漂泊者当前为【无】。是否要将其修改为【有】？${getInjSuffix()}`)) {
+                newExists = true; newGender = confirm("请选择性别：\n点击[确定]设为【女】\n点击[取消]设为【男】") ? '女' : '男';
+            } else return;
+        } else {
+            const act = prompt(`当前为【有】(性别: ${gender})。\n请输入对应数字：\n1. 修改性别\n2. 将其删除${getInjSuffix()}`);
+            if (act === '1') { newGender = gender === '男' ? '女' : '男'; alert(`性别将切换为：${newGender}`); }
+            else if (act === '2') { newExists = false; } else return;
+        }
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            if(!mvuData.stat_data.NPC漂泊者) mvuData.stat_data.NPC漂泊者 = {};
+            mvuData.stat_data.NPC漂泊者.是否存在 = newExists;
+            if(newExists) mvuData.stat_data.NPC漂泊者.性别 = newGender;
+            mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+            await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+            injectChangePrompt(`玩家修改了【NPC漂泊者】的设定！状态变更为：${newExists ? '存在 ('+newGender+')' : '不存在'}。`);
+            render(mvuData.stat_data);
+        } catch(e) { console.error(e); }
+    }
+
+    window.editVirginStatus = async function(charName) {
+        const d = getData(); const isVirgin = String(d.女性角色?.[charName]?.基础信息?.是否为处女) === 'true'; const newVal = !isVirgin;
+        if(!confirm(`是否强制将其处女状态修改为：${newVal ? '是' : '否'}？${getInjSuffix()}`)) return;
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            mvuData.stat_data.女性角色[charName].基础信息.是否为处女 = newVal;
+            mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+            await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+            injectChangePrompt(`玩家通过现实扭曲将角色【${charName}】的【处女状态】强制从“${isVirgin?'是':'否'}”修改为了“${newVal?'是':'否'}”。`);
+            render(mvuData.stat_data);
+        } catch(e) { console.error(e); }
+    }
+    
+    window.editCharPresence = async function(charName) {
+        const d = getData(); const isHere = String(d.女性角色?.[charName]?.是否在场) === 'true'; const newVal = !isHere;
+        if (!confirm(`是否切换【${charName}】状态为：${newVal ? '🟢在场' : '⚫离线'}？${getInjSuffix()}`)) return;
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            if (!mvuData?.stat_data?.女性角色?.[charName]) return;
+            mvuData.stat_data.女性角色[charName].是否在场 = newVal;
+            mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+            await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+            if (newVal) injectChangePrompt(`【系统指令：召唤角色】玩家已强制要求角色【${charName}】入场。`);
+            else injectChangePrompt(`【系统指令：角色退场】玩家已强制要求角色【${charName}】离场。`);
+            if (typeof toastr !== 'undefined') toastr.success(`${charName} 已${newVal?'入场':'离场'}`);
+            render(mvuData.stat_data);
+        } catch(e) { console.error(e); }
+    }
+
+    window.toggleCharSexStatus = async function(charName) {
+        const d = getData(); const cSex = d.女性角色?.[charName]?.性爱状态 || {}; const isSex = String(cSex.是否正在性爱) === 'true'; const newVal = !isSex;
+        if(!confirm(`是否强制切换【${charName}】性爱状态为：${newVal ? '🔞 性爱中' : '✅ 正常'}？${getInjSuffix()}`)) return;
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            if (!mvuData?.stat_data?.女性角色?.[charName]) return;
+            if (!mvuData.stat_data.女性角色[charName].性爱状态) mvuData.stat_data.女性角色[charName].性爱状态 = {};
+            mvuData.stat_data.女性角色[charName].性爱状态.是否正在性爱 = newVal;
+            mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+            await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+            if (newVal) injectChangePrompt(`【系统强制指令】玩家已将【${charName}】强制判定为进入性爱状态。`);
+            else injectChangePrompt(`【系统强制指令】玩家已将【${charName}】强制判定为脱离性爱状态。`);
+            if (typeof toastr !== 'undefined') toastr.success(`${charName} 性爱状态已更新`);
+            render(mvuData.stat_data);
+        } catch(e) { console.error(e); }
+    }
+
+    window.resetCharacter = async function(charName) {
+        if (!confirm(`是否重置【${charName}】的变量信息并要求AI重新填写？\n\n⚠️ 注意：此操作将清空大部分描写，并将状态重置。${getInjSuffix()}`)) return;
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            if (mvuData?.stat_data?.女性角色?.[charName]) {
+                const c = mvuData.stat_data.女性角色[charName];
+                const keepAffection = c.好感度; const keepSex = c.性爱状态?.是否正在性爱; const keepName = c.基础信息?.角色名字 || charName;
+                mvuData.stat_data.女性角色[charName] = {
+                    基础信息: { 角色名字: keepName, 身高: '等待AI填入', 罩杯: '等待AI填入', 外貌: '等待AI填入', 是否为处女: true },
+                    是否在场: true, 声痕位置: '等待AI填入', 当前穿着: { 上装: '等待AI填入', 下装: '等待AI填入', 饰品: '等待AI填入', 其它: '等待AI填入' },
+                    好感度: keepAffection, 额外信息: { 角色称号: '等待AI填入', 内心想法: '等待AI填入' },
+                    特写: [], 物品: '等待AI填入', 性爱状态: { 是否正在性爱: keepSex, 高潮进度: 0, 高潮计数: 0, _高潮次数上限: c.性爱状态?._高潮次数上限 ?? 5 },
+                    私密资料: { 性爱经验: '等待AI填入', 偏爱玩法: '等待AI填入', 持久痕迹: '等待AI填入', 性爱日志: [] }
+                };
+                mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+                await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+            }
+            injectChangePrompt(`请仔细检查并重新生成【${charName}】的完整状态，完全重置并详细填写她的所有变动条目，必须确保信息精准贴合当前最新的剧情上下文。`);
+            if (typeof toastr !== 'undefined') toastr.info(`已重置 ${charName}`);
+            render(mvuData.stat_data);
+        } catch(e) { console.error(e); }
+    }
+
+    window.deleteCharacter = async function(charName) {
+        if(!confirm(`⚠️ 高危操作确认 ⚠️\n\n你确定要删除角色【${charName}】的全部数据吗？此操作不可恢复！${getInjSuffix()}`)) return;
+        try {
+            let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+            if (mvuData?.stat_data?.女性角色?.[charName]) {
+                delete mvuData.stat_data.女性角色[charName];
+                mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data);
+                await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+                if(currentActiveChar === charName) currentActiveChar = null;
+                injectChangePrompt(`【系统指令】玩家已从变量表中彻底删除了角色【${charName}】的数据。`);
+                if (typeof toastr !== 'undefined') toastr.warning(`已删除角色 ${charName}`);
+                render(mvuData.stat_data);
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    // 日志 / 触发器 / 伏笔修改删除逻辑...
+    window.editLog = async function(charName, index) { 
+        let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+        const logs = mvuData?.stat_data?.女性角色?.[charName]?.私密资料?.性爱日志; if (!logs || !logs[index]) return;
+        const oldLog = logs[index];
+        const newTime = prompt(`修改日志时间:${getInjSuffix()}`, oldLog.时间); if (newTime === null) return;
+        const newContent = prompt("修改日志内容:", oldLog.内容); if (newContent === null) return;
+        const newResult = prompt("修改日志结果:", oldLog.结果); if (newResult === null) return;
+        logs[index] = { 时间: newTime, 内容: newContent, 结果: newResult };
+        mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data); await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+        if (typeof toastr !== 'undefined') toastr.success("日志已修改");
+        render(mvuData.stat_data);
+    }
+    window.deleteLog = async function(charName, index) { 
+        if(!confirm(`确定要删除这条日志吗？${getInjSuffix()}`)) return;
+        let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+        const logs = mvuData?.stat_data?.女性角色?.[charName]?.私密资料?.性爱日志;
+        if (logs && logs[index]) { logs.splice(index, 1); mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data); await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 }); if (typeof toastr !== 'undefined') toastr.success("日志已删除"); render(mvuData.stat_data); }
+    }
+    window.addTrigger = async function() { 
+        const newType = prompt(`请输入新触发器类别:${getInjSuffix()}`); if (!newType) return;
+        const newDesc = prompt("请输入触发器简述:"); if (!newDesc) return;
+        const newState = prompt("请输入初始状态:", "待触发"); if (!newState) return;
+        let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+        if(!mvuData.stat_data.剧情触发器) mvuData.stat_data.剧情触发器 = [];
+        mvuData.stat_data.剧情触发器.push({ 事件类别: newType, 事件简述: newDesc, 状态: newState, 事件计时: '' });
+        mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data); await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+        injectChangePrompt(`玩家添加了新触发器：[${newType}] ${newDesc}。`);
+        render(mvuData.stat_data);
+    }
+    window.editTrigger = async function(index) { 
+        let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+        const trigs = mvuData?.stat_data?.剧情触发器; if (!trigs || !trigs[index]) return; const oldT = trigs[index];
+        const newType = prompt(`修改类别:${getInjSuffix()}`, oldT.事件类别); if (newType === null) return;
+        const newDesc = prompt("修改简述:", oldT.事件简述); if (newDesc === null) return;
+        const newState = prompt("修改状态:", oldT.状态); if (newState === null) return;
+        const newTimer = prompt("修改计时:", oldT.事件计时); if (newTimer === null) return;
+        trigs[index] = { 事件类别: newType, 事件简述: newDesc, 状态: newState, 事件计时: newTimer };
+        mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data); await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+        render(mvuData.stat_data);
+    }
+    window.deleteTrigger = async function(index) { 
+        if(!confirm(`确定删除吗？${getInjSuffix()}`)) return;
+        let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+        const trigs = mvuData?.stat_data?.剧情触发器;
+        if (trigs && trigs[index]) { trigs.splice(index, 1); mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data); await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 }); render(mvuData.stat_data); }
+    }
+    window.deleteAllTriggers = async function() { 
+        if(!confirm(`确定清空吗？${getInjSuffix()}`)) return;
+        let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+        mvuData.stat_data.剧情触发器 = []; mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data); await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 }); render(mvuData.stat_data);
+    }
+    window.addForeshadow = async function() { 
+        const newContent = prompt(`新伏笔内容:${getInjSuffix()}`); if (!newContent) return;
+        const newResult = prompt("预期导向:"); if (!newResult) return;
+        let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+        if(!mvuData.stat_data.伏笔) mvuData.stat_data.伏笔 = [];
+        mvuData.stat_data.伏笔.push({ 伏笔内容: newContent, 指向的预期结果: newResult });
+        mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data); await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+        render(mvuData.stat_data);
+    }
+    window.editForeshadow = async function(index) { 
+        let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+        const fores = mvuData?.stat_data?.伏笔; if (!fores || !fores[index]) return; const oldF = fores[index];
+        const newContent = prompt(`修改伏笔内容:${getInjSuffix()}`, oldF.伏笔内容); if (newContent === null) return;
+        const newResult = prompt("修改预期结果:", oldF.指向的预期结果); if (newResult === null) return;
+        fores[index] = { 伏笔内容: newContent, 指向的预期结果: newResult };
+        mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data); await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 });
+        render(mvuData.stat_data);
+    }
+    window.deleteForeshadow = async function(index) { 
+        if(!confirm(`确定删除吗？${getInjSuffix()}`)) return;
+        let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+        const fores = mvuData?.stat_data?.伏笔;
+        if (fores && fores[index]) { fores.splice(index, 1); mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data); await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 }); render(mvuData.stat_data); }
+    }
+    window.deleteAllForeshadows = async function() { 
+        if(!confirm(`确定清空吗？${getInjSuffix()}`)) return;
+        let mvuData = await Mvu.getMvuData({ type: 'message', message_id: -1 });
+        mvuData.stat_data.伏笔 = []; mvuData.stat_data = tryApplyStoryLogic(mvuData.stat_data); await Mvu.replaceMvuData(mvuData, { type: 'message', message_id: -1 }); render(mvuData.stat_data);
+    }
+
+    // ==========================================
+    // 解耦分块渲染架构与懒加载机制
+    // ==========================================
+
+    function renderHeader(sd) {
+        const safe = (v, def='--') => (v !== undefined && v !== null && v !== '') ? v : def;
+        $('#head-loc').html('📍 <span class="txt-gradient">' + safe(sd.所在地点, '未知区域') + '</span>');
+        $('#head-time').text(`${safe(sd.当前时间)}`);
+        
+        const btn = $('#inj-toggle-btn');
+        if(btn.length) {
+            if(isInjectionEnabled) btn.addClass('active');
+            else btn.removeClass('active');
+        }
+    }
+
+    function renderUserTab(sd) {
+        const safe = (v, def='--') => (v !== undefined && v !== null && v !== '') ? v : def;
+        const u = sd.主角信息 || {};
+        const bag = u.物品栏 || {};
+        const chars = sd.女性角色 || {}; 
+        
+        const activeSex = [];
+        const uSex = u.性爱状态 || {};
+        if (String(uSex.是否正在性爱) === 'true') activeSex.push({ name: '{{user}}', progress: uSex.高潮进度||0, count: uSex.高潮计数||0, max: uSex._高潮次数上限||5, type: 'user' });
+        Object.keys(chars).forEach(k => {
+            const cSex = chars[k].性爱状态 || {};
+            if (String(cSex.是否正在性爱) === 'true') activeSex.push({ name: k, progress: cSex.高潮进度||0, count: cSex.高潮计数||0, max: cSex._高潮次数上限||5, type: 'fem' });
+        });
+
+        let sexHtml = '';
+        if (activeSex.length > 0) {
+            sexHtml = `<div id="sex-monitor" class="sex-monitor-box">
+                <div style="font-size:11px;color:var(--accent-color);margin-bottom:4px;font-weight:bold">♥ 性爱状态</div>` +
+                activeSex.map(d => `
+                <div class="sex-row">
+                    <div style="display:flex;justify-content:space-between;color:#fff;"><span>${d.name}</span><span>${d.count}/${d.max}次</span></div>
+                    <div class="progress-track"><div class="progress-bar ${d.type==='user'?'pb-user':'pb-fem'}" style="width:${d.progress}%"></div></div>
+                </div>`).join('') + `</div>`;
+        }
+
+        const uGender = u.性别 || '男';
+        const isDrifter = String(u.是否是漂泊者) === 'true' ? '是' : '否';
+        const isUSex = String(uSex.是否正在性爱) === 'true';
+        const npc = sd.NPC漂泊者 || {};
+        const npcStr = String(npc.是否存在) === 'true' ? `存在 (${npc.性别})` : '无';
+
+        const bagArr = Object.keys(bag);
+        let bagHtml = bagArr.map(k => `<span class="item-tag" onclick="manageItem('${k}')">${k} x${bag[k].数量}</span>`).join('');
+        bagHtml += `<span class="item-tag" style="border-style:dashed; opacity:0.8; margin-left: ${bagArr.length ? '4px' : '0'}" onclick="addItem()" title="添加新物品">➕ 添加物品</span>`;
+
+        // 不在场角色半透明
+        const allCharKeys = Object.keys(chars).sort((a, b) => {
+            const aHere = String(chars[a]?.是否在场) === 'true';
+            const bHere = String(chars[b]?.是否在场) === 'true';
+            if (aHere === bHere) return 0; 
+            return aHere ? -1 : 1; 
+        });
+        
+        const relHtml = allCharKeys.length ? allCharKeys.map(n => {
+            const c = chars[n] || {};
+            const isHere = String(c.是否在场) === 'true';
+            const opacityStyle = isHere ? '' : 'opacity:0.5;';
+            return `<span class="item-tag" style="border-color:var(--accent-color);${opacityStyle}">${n} <span class="editable-heart" style="color:#fb7185;" title="点击修改好感度" onclick="editAffection('${n}')">❤${c.好感度||0}</span></span>`;
+        }).join('') : '<span style="color:#666;font-size:10px">暂无</span>';
+
+        const html = `
+            ${sexHtml}
+            <div class="grid-2-col">
+                <div class="data-block">
+                    <div class="block-header">{{user}}档案<span class="edit-hint">✏️ 支持点击虚线项更改</span></div>
+                    <div class="row"><span class="label">主角性别</span><span class="val editable-text" title="点击切换性别" onclick="editUserGender()">${uGender}</span></div>
+                    <div class="row"><span class="label">是否漂泊者</span><span class="val editable-text" style="color:${isDrifter==='是'?'var(--accent-color)':'inherit'}" title="点击切换" onclick="editUserRover()">${isDrifter}</span></div>
+                    <div class="row"><span class="label">身份设定</span><span class="val editable-text" title="点击修改身份" onclick="editUserField('身份与额外设定')">${safe(u.身份与额外设定)}</span></div>
+                    <div class="row"><span class="label">当前状态</span><span class="val editable-text" title="点击修改状态" onclick="editUserField('当前状态')">${safe(u.当前状态)}</span></div>
+                    <div class="row"><span class="label">性爱状态</span><span class="val editable-text" style="color:${isUSex?'#f472b6':'#4ade80'}" title="点击切换性爱状态" onclick="toggleUserSexStatus()">${isUSex?'🔞 性爱中':'✅ 正常'}</span></div>
+                    <div class="row"><span class="label">当前穿着</span><span class="val editable-text" title="点击修改穿着" onclick="editUserField('当前穿着')">${safe(u.当前穿着)}</span></div>
+                    <div class="row"><span class="label">NPC漂泊者</span><span class="val editable-text" title="点击修改NPC漂泊者" onclick="editNPCRover()">${npcStr}</span></div>
+                </div>
+                <div class="data-block">
+                    <div class="block-header">剧情概览<span class="edit-hint">✏️ 可点击虚线编辑状态</span></div>
+                    <div class="row"><span class="label">当前标题</span><span class="val hl">${safe(sd.剧情显示)}</span></div>
+                    <div class="row"><span class="label">后日谈</span><span class="val">${String(sd.是否为后日谈) === 'true' ? '是' : '否'}</span></div>
+                    <div class="row"><span class="label">长期目标</span><span class="val editable-text" style="color:#fbbf24" title="点击修改目标" onclick="editGoal()">${safe(sd.当前长期目标)}</span></div>
+                    <div class="row"><span class="label">当前事件</span><span class="val editable-text" title="点击修改当前事件" onclick="editStoryVar('当前演绎事件', '当前事件')">${safe(sd.当前演绎事件)}</span></div>
+                    <div class="row"><span class="label">当前节点</span><span class="val editable-text" title="点击修改当前节点" onclick="editStoryVar('当前演绎事件节点', '当前节点')">${safe(sd.当前演绎事件节点)}</span></div>
+                </div>
+            </div>
+            <div class="data-block">
+                <div class="block-header">物品栏</div>
+                <div class="tag-list">${bagHtml}</div>
+            </div>
+            <div class="data-block">
+                <div class="block-header">人际关系网</div>
+                <div class="tag-list">${relHtml}</div>
+            </div>
+        `;
+        $('#page-user').html(html);
+    }
+
+    function renderStoryTab(sd) {
+        const safe = (v, def='--') => (v !== undefined && v !== null && v !== '') ? v : def;
+        const trigs = sd.剧情触发器 || [];
+        const trigsHtml = trigs.length ? trigs.map((t, idx) => {
+            const isActive = (t.状态 === '进行中' || t.状态 === '正常计时' || t.状态 === '待触发');
+            const color = isActive ? 'var(--accent-color)' : '#666';
+            const badgeBg = isActive ? 'rgba(56, 189, 248, 0.15)' : 'rgba(255,255,255,0.05)';
+            const timerBlock = t.事件计时 ? `<div style="margin-top:2px; font-family:monospace; font-size:10px; color:var(--accent-bright); border:1px solid ${color}; border-radius:3px; padding:0 3px; display:inline-block">${t.事件计时}</div>` : '';
+            return `
+            <div style="margin-bottom:6px;padding:8px 12px;background:rgba(0,0,0,0.2);border-radius:4px;border-left:2px solid ${color};font-size:11px; display:flex; justify-content:space-between; align-items:flex-start; gap: 8px;">
+                <div style="display:flex; flex-direction:column; gap:4px; flex:1;">
+                    <span style="background:${badgeBg};color:${color};padding:1px 6px;border-radius:3px;font-size:10px;font-weight:bold;width:fit-content; line-height:1.2;">${t.事件类别||'事件'}</span>
+                    <div style="color:#e2e8f0;line-height:1.4; word-break: break-all;">${t.事件简述 || '暂无描述'}</div>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:flex-end; flex:0 0 auto; gap:2px;">
+                    <span style="color:${color};font-weight:bold;opacity:0.9; line-height:1.2;">${t.状态}</span>
+                    ${timerBlock}
+                    <div style="margin-top:4px;">
+                        <span class="log-btn edit" onclick="editTrigger(${idx})" title="修改">✎</span>
+                        <span class="small-x-btn" onclick="deleteTrigger(${idx})" title="删除">×</span>
+                    </div>
+                </div>
+            </div>`;
+        }).join('') : '<div style="text-align:center;color:#666;font-size:10px;padding:4px">暂无触发器</div>';
+
+        const fores = sd.伏笔 || [];
+        const foresHtml = fores.length ? fores.map((f, idx) => `
+            <div style="margin-bottom:4px;padding:4px;background:rgba(0,0,0,0.2);border-radius:4px;font-size:11px; display:flex; justify-content:space-between; align-items:flex-start;">
+                <div style="flex:1">
+                    <div style="color:#cbd5e1">${f.伏笔内容}</div>
+                    <div style="color:var(--accent-color);margin-top:2px">→ ${f.指向的预期结果}</div>
+                </div>
+                <div style="flex:0 0 auto; margin-left:6px">
+                    <span class="log-btn edit" onclick="editForeshadow(${idx})" title="修改">✎</span>
+                    <span class="small-x-btn" onclick="deleteForeshadow(${idx})" title="删除">×</span>
+                </div>
+            </div>`
+        ).join('') : '<div style="text-align:center;color:#666;font-size:10px;padding:4px">暂无伏笔</div>';
+
+        const html = `
+            <div class="data-block">
+                <div class="block-header">命途航标<span class="edit-hint">📖 请使用剧情控制台控制版本与后日谈状态</span></div>
+                <div class="row"><span class="label">剧情版本</span><span class="val hl">${safe(sd.剧情显示)}</span></div>
+                <div class="row"><span class="label">后日谈</span><span class="val">${String(sd.是否为后日谈) === 'true' ? '是' : '否'}</span></div>
+                <div class="row"><span class="label">长期目标</span><span class="val editable-text" title="点击修改目标" onclick="editGoal()">${safe(sd.当前长期目标)}</span></div>
+                <div class="row"><span class="label">当前事件</span><span class="val editable-text" title="点击修改当前事件" onclick="editStoryVar('当前演绎事件', '当前事件')">${safe(sd.当前演绎事件)}</span></div>
+                <div class="row"><span class="label">当前节点</span><span class="val editable-text" title="点击修改当前节点" onclick="editStoryVar('当前演绎事件节点', '当前节点')">${safe(sd.当前演绎事件节点)}</span></div>
+                <div class="row"><span class="label">下一节点</span><span class="val editable-text" title="点击修改下一节点" onclick="editStoryVar('即将进行的下一个事件节点', '下一节点')">${safe(sd.即将进行的下一个事件节点)}</span></div>
+                <div style="height:1px;background:rgba(255,255,255,0.1);margin:4px 0"></div>
+                <div class="row"><span class="label">上一事件</span><span class="val editable-text" title="点击修改上一事件" onclick="editStoryVar('已完成的上一个事件', '上一事件')">${safe(sd.已完成的上一个事件)}</span></div>
+                <div class="row"><span class="label">上一节点</span><span class="val editable-text" title="点击修改上一节点" onclick="editStoryVar('已完成的上一个事件节点', '上一节点')">${safe(sd.已完成的上一个事件节点)}</span></div>
+                <div class="row"><span class="label">终止条件</span><span class="val editable-text" title="点击修改终止条件" onclick="editStoryVar('章节终止条件', '章节终止条件')">${safe(sd.章节终止条件)}</span></div>
+            </div>
+            <div class="data-block">
+                <div class="block-header" style="display:flex; justify-content:space-between; align-items:baseline;">
+                    <span>剧情触发器</span>
+                    <div>
+                        <span class="reset-btn" style="border:none; background:transparent; font-weight:normal; margin-right:4px;" onclick="addTrigger()">➕添加</span>
+                        <span class="reset-btn" style="border:none; background:transparent; font-weight:normal;" onclick="deleteAllTriggers()">🗑️一键清空</span>
+                    </div>
+                </div>
+                <div>${trigsHtml}</div>
+            </div>
+            <div class="data-block">
+                <div class="block-header" style="display:flex; justify-content:space-between; align-items:baseline;">
+                    <span>暗线伏笔</span>
+                    <div>
+                        <span class="reset-btn" style="border:none; background:transparent; font-weight:normal; margin-right:4px;" onclick="addForeshadow()">➕添加</span>
+                        <span class="reset-btn" style="border:none; background:transparent; font-weight:normal;" onclick="deleteAllForeshadows()">🗑️一键清空</span>
+                    </div>
+                </div>
+                <div>${foresHtml}</div>
+            </div>
+        `;
+        $('#page-story').html(html);
+    }
+
+    // 按需渲染角色选项卡
+    function renderCharsTab(sd) {
+        const chars = sd.女性角色 || {}; 
+        const cKeys = Object.keys(chars).sort((a,b) => {
+            const aHere = String(chars[a]?.是否在场) === 'true';
+            const bHere = String(chars[b]?.是否在场) === 'true';
+            if (aHere === bHere) return 0;
+            return aHere ? -1 : 1;
+        });
+
+        $('#page-chars').html(`<div id="char-nav" class="char-scroll-nav"></div><div id="char-detail"></div>`);
+        const nav = $('#char-nav');
+        const detail = $('#char-detail');
+
+        if (cKeys.length === 0) {
+            detail.html('<div style="text-align:center;padding:20px;color:#666;font-size:12px">暂无角色</div>');
+            currentActiveChar = null;
+            return;
+        }
+
+        if (!currentActiveChar || !cKeys.includes(currentActiveChar)) currentActiveChar = cKeys[0];
+
+        cKeys.forEach((key) => {
+            const c = chars[key];
+            const isActive = (key === currentActiveChar);
+            const isHere = String(c.是否在场) === 'true';
+            const opacityStyle = isHere ? '' : 'opacity:0.5;';
+            
+            const btn = $(`<div class="char-pill ${isActive?'active':''}" style="${opacityStyle}">${key}<span class="heart-icon">❤${c.好感度||0}</span></div>`);
+            
+            // 点击时重新渲染当前选中的角色
+            btn.on('click', function() { 
+                $('.char-pill').removeClass('active'); $(this).addClass('active'); 
+                currentActiveChar = key;
+                
+                detail.html('<div style="text-align:center;padding:30px;color:var(--accent-color);font-weight:bold;animation: pulse 1s infinite;">读取档案中...</div>');
+                
+                setTimeout(() => {
+                    const freshSd = getData();
+                    renderCharDetail(key, freshSd.女性角色?.[key]); 
+                }, 20); 
+            });
+            nav.append(btn);
+        });
+
+        renderCharDetail(currentActiveChar, chars[currentActiveChar]);
+        
+        $('#char-nav').off('wheel').on('wheel', function(e) {
+            if (e.originalEvent.deltaY !== 0) {
+                e.preventDefault();
+                this.scrollLeft += e.originalEvent.deltaY;
+            }
+        });
+    }
+
+    function renderCharDetail(name, d) {
+        if (!d) return;
+        const base = d.基础信息||{}; const wear = d.当前穿着||{}; const extra = d.额外信息||{}; const priv = d.私密资料||{};
+        const isHere = String(d.是否在场)==='true'; const isSex = String(d.性爱状态?.是否正在性爱)==='true';
+        
+        const featList = (d.特写||[]).map(f => `<div class="kv-row"><span class="hl-part">[${f.部位}]</span><span style="color:#cbd5e1">${f.描写}</span></div>`).join('');
+        
+        const logs = priv.性爱日志 || [];
+        const logHtml = logs.length ? logs.map((l, idx) => 
+            `<div style="margin-top:6px;padding:5px;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05);border-radius:4px;font-size:11px;">
+                <div style="display:flex;justify-content:space-between;color:var(--accent-color);margin-bottom:2px;font-weight:bold;align-items:center;">
+                    <span>${l.时间||'未知时间'}</span>
+                    <div>
+                        <span class="log-btn edit" onclick="editLog('${name}', ${idx})" title="修改">✎</span>
+                        <span class="small-x-btn" onclick="deleteLog('${name}', ${idx})" title="删除">×</span>
+                    </div>
+                </div>
+                <div style="color:#e2e8f0;margin-bottom:2px;line-height:1.3">${l.内容||''}</div>
+                <div style="color:var(--text-sub);font-size:10px;font-style:italic">➔ ${l.结果||''}</div>
+            </div>`
+        ).join('') : '<div style="color:#666;font-size:10px;margin-top:4px">暂无日志</div>';
+
+        const isVirginStr = String(base.是否为处女)==='true' ? '是' : '否';
+
+        const html = `
+            <div class="char-hero-header">
+                <div class="char-header-top">
+                    <div class="giant-name">${name}</div>
+                </div>
+                <div class="char-header-bottom">
+                    <div class="sub-title">${extra.角色称号||'无称号'}</div>
+                    <div class="reset-btn" title="重置角色大部分变量及状态" onclick="resetCharacter('${name}')">🔄重置</div>
+                    <div class="reset-btn" style="color:#fca5a5;border-color:rgba(239, 68, 68, 0.3)" title="彻底删除该角色数据" onclick="deleteCharacter('${name}')">🗑️删除</div>
+                    <div class="header-heart-container">
+                        <div class="editable-heart" style="font-size:14px;color:var(--heart-color);font-weight:bold" title="点击修改好感度" onclick="editAffection('${name}')">❤ ${d.好感度||0}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="psych-box">💭 ${extra.内心想法 || '（暂无心理活动）'}</div>
+
+            <div class="status-row">
+                <div class="status-badge clickable-badge ${isHere?'st-online':'st-offline'}" onclick="editCharPresence('${name}')" title="点击切换在场状态">${isHere?'🟢 当前在场':'⚫ 当前离线'}</div>
+                <div class="status-badge clickable-badge ${isSex?'st-sex':'st-offline'}" onclick="toggleCharSexStatus('${name}')" title="点击切换性爱状态">${isSex?'🔞 性爱进行中':'✅ 状态正常'}</div>
+            </div>
+
+            <div class="basic-grid">
+                <div class="basic-cell"><div class="bc-label">身高</div><div class="bc-val">${base.身高||'-'}</div></div>
+                <div class="basic-cell"><div class="bc-label">罩杯</div><div class="bc-val">${base.罩杯||'-'}</div></div>
+                <div class="basic-cell"><div class="bc-label">处女</div><div class="bc-val editable-text" style="color:var(--text-hl)" title="点击强制修改处女状态" onclick="editVirginStatus('${name}')">${isVirginStr}</div></div>
+                <div class="basic-cell"><div class="bc-label">声痕</div><div class="bc-val">${d.声痕位置||'-'}</div></div>
+            </div>
+
+            <div class="wear-box">
+                <div class="block-header" style="border:none;margin:0;font-size:13px;display:flex;justify-content:space-between;align-items:baseline;">
+                    <span>外貌与衣着</span>
+                    <span class="reset-btn" style="padding:1px 4px;font-size:10px;font-weight:normal;border:none;background:transparent;" onclick="resetClothing('${name}')">🔄重置着装</span>
+                </div>
+                <div class="wb-list">
+                    <div class="row" style="margin-bottom:2px"><span class="label" style="color:var(--text-hl);width:35px;min-width:35px">外貌</span><span class="val">${base.外貌||'-'}</span></div>
+                    <div class="row" style="margin-bottom:2px"><span class="label" style="color:var(--text-hl);width:35px;min-width:35px">上装</span><span class="val">${wear.上装||'-'}</span></div>
+                    <div class="row" style="margin-bottom:2px"><span class="label" style="color:var(--text-hl);width:35px;min-width:35px">下装</span><span class="val">${wear.下装||'-'}</span></div>
+                    <div class="row" style="margin-bottom:2px"><span class="label" style="color:var(--text-hl);width:35px;min-width:35px">饰品</span><span class="val">${wear.饰品||'-'}</span></div>
+                    <div class="row" style="margin-bottom:2px"><span class="label" style="color:var(--text-hl);width:35px;min-width:35px">其它</span><span class="val">${wear.其它||'-'}</span></div>
+                </div>
+            </div>
+
+            <div class="bottom-split">
+                <div class="split-card">
+                    <div class="sc-title" style="display:flex;justify-content:space-between;align-items:baseline;">
+                        <span>特写描绘</span>
+                        <span class="reset-btn" style="padding:0 4px;font-size:10px;font-weight:normal;border:none;background:transparent;" onclick="resetFeatures('${name}')">🔄重置特写</span>
+                    </div>
+                    <div class="sc-content" style="display:flex;flex-direction:column;">${featList || '<div style="color:#666">暂无特写</div>'}</div>
+                </div>
+                <div class="split-card">
+                    <div class="sc-title">私密档案</div>
+                    <div class="sc-content" style="display:flex;flex-direction:column;">
+                        <div class="kv-row"><span class="hl-key">性爱经验:</span><span style="color:#cbd5e1">${priv.性爱经验||'无'}</span></div>
+                        <div class="kv-row"><span class="hl-key">性爱偏好:</span><span style="color:#cbd5e1">${priv.偏爱玩法||'无'}</span></div>
+                        <div class="kv-row"><span class="hl-key">持久痕迹:</span><span style="color:#cbd5e1">${priv.持久痕迹||'无'}</span></div>
+                        <div style="margin-top:8px;border-top:1px dashed var(--accent-border);padding-top:4px;font-weight:bold;color:var(--text-hl);font-size:11px">📝 性爱日志</div>
+                        ${logHtml}
+                    </div>
+                </div>
+            </div>
+        `;
+        $('#char-detail').html(html);
+    }
+
+    function renderOptTab() {
+        const rawContent = $('#raw-store').html();
+        const opts = parseOptions(rawContent);
+        
+        if (opts.length === 0) {
+            $('#page-opt').html('<div id="opt-list" style="display:flex;flex-direction:column;gap:6px"><div style="text-align:center;padding:20px;color:#666;font-size:12px">暂无行动</div></div>');
+            return;
+        }
+
+        const optBox = $('<div id="opt-list" style="display:flex;flex-direction:column;gap:6px"></div>');
+        opts.forEach(o => {
+            const btn = $(`<div class="opt-btn">${o.html}</div>`);
+            btn.on('click', function(e) {
+                e.stopPropagation(); $('.opt-btn').removeClass('active'); $(this).addClass('active');
+                try {
+                    let inp = window.parent?.document?.querySelector('#send_textarea') || document.querySelector('#send_textarea');
+                    if (inp) {
+                        const txt = cleanInputText(o.text); const cur = inp.value.trim();
+                        inp.value = cur ? `${cur}\n${txt}` : txt;
+                        inp.dispatchEvent(new Event('input', { bubbles: true })); inp.focus();
+                    }
+                } catch (err) {}
+            });
+            optBox.append(btn);
+        });
+        $('#page-opt').empty().append(optBox);
+    }
+
+    function doRenderTab(tabId, sd) {
+        try {
+            if (tabId === 'page-user') renderUserTab(sd);
+            else if (tabId === 'page-story') renderStoryTab(sd);
+            else if (tabId === 'page-chars') renderCharsTab(sd);
+            else if (tabId === 'page-opt') renderOptTab();
+            tabRendered[tabId] = true;
+        } catch (err) {
+            $(`#${tabId}`).html('<div style="padding:20px;color:red;font-size:12px">UI Error: ' + err.message + '</div>');
+        }
+    }
+
+    // 主更新函数，支持接收指定数据强制刷新
+    function render(forcedData) {
+        try {
+            const sd = forcedData || getData();
+            renderHeader(sd);
+            
+            // 标记所有Tab缓存过期
+            tabRendered = { 'page-user': false, 'page-story': false, 'page-opt': false };
+            
+            // 实时刷新当前停留的页面
+            const activeTabId = $('.tab-page.active').attr('id');
+            if (activeTabId) {
+                doRenderTab(activeTabId, sd);
+            }
+        } catch (e) { console.error("Main Render Error:", e); }
+    }
+
+    // 点击导航按钮的逻辑：处理异步显示加载提示
+    window.switchTab = function(id, btn, theme) {
+        const card = $('.tide-card');
+        const isSameBtn = $(btn).hasClass('active');
+        const isExpanded = card.hasClass('expanded');
+
+        lastActiveTabBtn = $(btn);
+
+        $('.tab-page').removeClass('active'); 
+        $(`#${id}`).addClass('active');
+        $('.nav-btn').removeClass('active');
+        $('body').removeClass('theme-blue theme-purple theme-pink theme-green').addClass(theme);
+
+        if (isSameBtn && isExpanded) {
+            card.removeClass('expanded');
+            $(btn).removeClass('active');
+        } else {
+            $(btn).addClass('active');
+            card.addClass('expanded');
+        }
+
+        // 懒加载逻辑
+        if (!tabRendered[id]) {
+            $(`#${id}`).html('<div style="text-align:center;padding:40px 0;color:var(--accent-color);font-weight:bold;animation: pulse 1s infinite;">数据装载中...</div>');
+            setTimeout(() => { doRenderTab(id, getData()); }, 30);
+        }
+    }
+
+    async function init() {
+        const phoneTab = window.__TIDE_PHONE_TAB__;
+        const isPhone = phoneTab === 'page-user' || phoneTab === 'page-story';
+
+        if (isPhone) {
+            document.documentElement.classList.add('wuwa-phone-embed');
+            document.documentElement.setAttribute('data-tide-tab', phoneTab);
+            $('body').addClass('wuwa-phone-embed');
+            $('body').removeClass('theme-blue theme-purple theme-pink theme-green').addClass(phoneTab === 'page-story' ? 'theme-purple' : 'theme-blue');
+            $('.tide-card').addClass('expanded phone-mode');
+            $('.tide-nav').remove();
+            $('#page-opt').remove();
+            $('.tab-page').removeClass('active');
+            $('#' + phoneTab).addClass('active');
+        }
+
+        if (!isPhone && window.waitGlobalInitialized) {
+            await waitGlobalInitialized('Mvu');
+        } else if (isPhone && window.waitGlobalInitialized) {
+            await Promise.race([
+                waitGlobalInitialized('Mvu'),
+                new Promise(resolve => setTimeout(resolve, 3000)),
+            ]);
+        }
+
+        if (!isPhone) {
+            $('body').addClass('theme-blue');
+            $('.tab-page').removeClass('active');
+            $('#page-user').addClass('active');
+        }
+
+        render();
+
+        if (isPhone) {
+            tabRendered = { 'page-user': false, 'page-story': false, 'page-opt': false };
+            doRenderTab(phoneTab, getData());
+            window.addEventListener('message', (ev) => {
+                if (ev.data && ev.data.type === 'wuwa-tide-refresh') render();
+            });
+        }
+
+        if (window.eventOn && window.Mvu) {
+            eventOn(Mvu.events.VARIABLE_UPDATE_ENDED, (vars) => {
+                if (renderDebounceTimer) clearTimeout(renderDebounceTimer);
+                renderDebounceTimer = setTimeout(() => {
+                    render(vars && vars.stat_data ? vars.stat_data : null);
+                }, 100);
+            });
+        }
+
+        if (!isPhone) {
+            lastActiveTabBtn = $('.nav-btn').first();
+            $('.tide-header').off('click').on('click', function() {
+                const card = $('.tide-card');
+                if (card.hasClass('expanded')) {
+                    card.removeClass('expanded');
+                    $('.nav-btn').removeClass('active');
+                } else {
+                    if (lastActiveTabBtn && lastActiveTabBtn.length) lastActiveTabBtn.click();
+                    else $('.nav-btn').first().click();
+                }
+            });
+            $('.nav-btn').removeClass('active');
+        }
+    }
+    
+    $(() => setTimeout(init, 100));
+</script>
+</head>
+<body>
+
+<div class="tide-card">
+    <div class="tide-header">
+        <div class="loc-box" id="head-loc">--</div>
+        <div class="header-right">
+             <div class="time-badge" id="head-time">--</div>
+             <div class="glass-toggle" id="inj-toggle-btn" onclick="toggleInjection(event)" title="变量修改注入开关">
+                 <div class="toggle-circle"></div>
+             </div>
+        </div>
+    </div>
+
+    <div class="tide-viewport">
+        <div id="page-user" class="tab-page active">
+            <div id="sex-monitor" class="sex-monitor-box" style="display:none"></div>
+            <div class="grid-2-col">
+                <div class="data-block">
+                    <div class="block-header">{{user}}档案<span class="edit-hint">✏️ 支持点击虚线项更改</span></div>
+                    <div class="row"><span class="label">主角性别</span><span id="u-gender" class="val">--</span></div>
+                    <div class="row"><span class="label">是否漂泊者</span><span id="u-is-drifter" class="val">--</span></div>
+                    <div class="row"><span class="label">身份设定</span><span id="u-id" class="val">--</span></div>
+                    <div class="row"><span class="label">当前状态</span><span id="u-state" class="val">--</span></div>
+                    <div class="row"><span class="label">性爱状态</span><span id="u-sex-status" class="val">--</span></div>
+                    <div class="row"><span class="label">当前穿着</span><span id="u-wear" class="val">--</span></div>
+                    <div class="row"><span class="label">NPC漂泊者</span><span id="u-npc" class="val">--</span></div>
+                </div>
+                <div class="data-block">
+                    <div class="block-header">剧情概览<span class="edit-hint">✏️ 可点击虚线编辑状态</span></div>
+                    <div class="row"><span class="label">当前标题</span><span id="u-story-title" class="val hl">--</span></div>
+                    <div class="row"><span class="label">后日谈</span><span id="u-post" class="val">--</span></div>
+                    <div class="row"><span class="label">长期目标</span><span id="u-goal" class="val">--</span></div>
+                    <div class="row"><span class="label">当前事件</span><span id="u-story-evt" class="val">--</span></div>
+                    <div class="row"><span class="label">当前节点</span><span id="u-story-node" class="val">--</span></div>
+                </div>
+            </div>
+            <div class="data-block">
+                <div class="block-header">物品栏</div>
+                <div id="u-bag" class="tag-list"></div>
+            </div>
+            <div class="data-block">
+                <div class="block-header">人际关系网</div>
+                <div id="u-rel" class="tag-list"></div>
+            </div>
+        </div>
+
+        <div id="page-story" class="tab-page">
+            <div class="data-block">
+                <div class="block-header">命途航标<span class="edit-hint">📖 请使用剧情控制台控制版本与后日谈状态</span></div>
+                <div class="row"><span class="label">剧情版本</span><span id="s-ver" class="val hl">--</span></div>
+                <div class="row"><span class="label">后日谈</span><span id="s-post" class="val">--</span></div>
+                <div class="row"><span class="label">长期目标</span><span id="s-goal" class="val">--</span></div>
+                <div class="row"><span class="label">当前事件</span><span id="s-now" class="val">--</span></div>
+                <div class="row"><span class="label">当前节点</span><span id="s-node" class="val">--</span></div>
+                <div class="row"><span class="label">下一节点</span><span id="s-next-node" class="val">--</span></div>
+                <div style="height:1px;background:rgba(255,255,255,0.1);margin:4px 0"></div>
+                <div class="row"><span class="label">上一事件</span><span id="s-last-evt" class="val">--</span></div>
+                <div class="row"><span class="label">上一节点</span><span id="s-last-node" class="val">--</span></div>
+                <div class="row"><span class="label">终止条件</span><span id="s-end" class="val">--</span></div>
+            </div>
+            <div class="data-block">
+                <div class="block-header" style="display:flex; justify-content:space-between; align-items:baseline;">
+                    <span>剧情触发器</span>
+                    <div>
+                        <span class="reset-btn" style="border:none; background:transparent; font-weight:normal; margin-right:4px;" onclick="addTrigger()">➕添加</span>
+                        <span class="reset-btn" style="border:none; background:transparent; font-weight:normal;" onclick="deleteAllTriggers()">🗑️一键清空</span>
+                    </div>
+                </div>
+                <div id="s-trigs"></div>
+            </div>
+            <div class="data-block">
+                <div class="block-header" style="display:flex; justify-content:space-between; align-items:baseline;">
+                    <span>暗线伏笔</span>
+                    <div>
+                        <span class="reset-btn" style="border:none; background:transparent; font-weight:normal; margin-right:4px;" onclick="addForeshadow()">➕添加</span>
+                        <span class="reset-btn" style="border:none; background:transparent; font-weight:normal;" onclick="deleteAllForeshadows()">🗑️一键清空</span>
+                    </div>
+                </div>
+                <div id="s-fores"></div>
+            </div>
+        </div>
+
+        <div id="page-opt" class="tab-page">
+            <div id="opt-list" style="display:flex;flex-direction:column;gap:6px"></div>
+        </div>
+    </div>
+
+    <div class="tide-nav">
+        <div class="nav-btn" onclick="switchTab('page-user',this,'theme-blue')"><div class="nav-icon">👤</div><div>状态</div></div>
+        <div class="nav-btn" onclick="switchTab('page-story',this,'theme-purple')"><div class="nav-icon">📖</div><div>剧情</div></div>
+        <div class="nav-btn" onclick="switchTab('page-opt',this,'theme-green')"><div class="nav-icon">⚡</div><div>行动</div></div>
+    </div>
+</div>
+
+<div id="raw-store" style="display:none">$1</div>
+
+</body>
+</html>

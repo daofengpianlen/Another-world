@@ -1,0 +1,18 @@
+{
+    "disabled": false,
+    "findRegex": "/<p>([\\s\\S]*?)<\\/p>/gs",
+    "id": "4ce9903b-a807-4e38-90be-3f408df4df5e",
+    "markdownOnly": true,
+    "maxDepth": null,
+    "minDepth": null,
+    "placement": [
+        1,
+        2
+    ],
+    "promptOnly": false,
+    "replaceString": "<div style=\"position: relative; margin-bottom: 15px; padding-bottom: 20px;\">\n      <div style=\"background-color: rgba(245, 245, 245, 0.8); border: 2px dashed #A9A9A9; border-radius: 15px; padding: 12px; color: #696969; font-size: 14px; line-height: 1.4; font-style: italic;\">\n        $1\n      </div>\n    </div>",
+    "runOnEdit": false,
+    "scriptName": "旁白",
+    "substituteRegex": true,
+    "trimStrings": []
+}

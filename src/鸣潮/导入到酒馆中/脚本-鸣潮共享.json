@@ -1,0 +1,17 @@
+{
+  "type": "script",
+  "enabled": true,
+  "name": "鸣潮共享",
+  "id": "c3d4e5f6-a7b8-9012-cdef-345678901234",
+  "content": "import 'http://127.0.0.1:5500/dist/鸣潮/脚本/共享/index.js'",
+  "info": "提供 WuWaShared.STORY_MAP 与 calculateStoryLogic。开场脚本也会自动注入内置数据；建议与本项目其他鸣潮脚本一并启用。",
+  "button": {
+    "enabled": false,
+    "buttons": []
+  },
+  "data": {},
+  "export_with": {
+    "data": true,
+    "button": true
+  }
+}

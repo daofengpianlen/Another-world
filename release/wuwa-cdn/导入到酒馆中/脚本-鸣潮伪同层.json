@@ -1,0 +1,17 @@
+{
+  "type": "script",
+  "enabled": true,
+  "name": "鸣潮伪同层",
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "content": "import 'https://cdn.jsdelivr.net/gh/daofengpianlen/-@main/dist/鸣潮/%E8%84%9A%E6%9C%AC/%E4%BC%AA%E5%90%8C%E5%B1%82/index.js'",
+  "info": "伪同层主界面（含内置开场面板）+ 小爱手机。仅需启用本脚本与共享、变量结构；无需单独启用「鸣潮开场」或「鸣潮手机」。 [CDN: https://cdn.jsdelivr.net/gh/daofengpianlen/-@main]",
+  "button": {
+    "enabled": false,
+    "buttons": []
+  },
+  "data": {},
+  "export_with": {
+    "data": true,
+    "button": true
+  }
+}

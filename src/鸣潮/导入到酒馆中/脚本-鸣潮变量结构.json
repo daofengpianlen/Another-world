@@ -1,0 +1,17 @@
+{
+  "type": "script",
+  "enabled": true,
+  "name": "鸣潮变量结构",
+  "id": "d4e5f6a7-b8c9-0123-def0-456789012345",
+  "content": "import 'http://127.0.0.1:5500/dist/鸣潮/脚本/变量结构/index.js'",
+  "info": "注册鸣潮 stat_data 的 MVU zod schema。与 MVU 插件、鸣潮共享/开场/伪同层一并启用；无此脚本时 insert 女性角色仍可用，但 MVU 不做结构补全与校验。",
+  "button": {
+    "enabled": false,
+    "buttons": []
+  },
+  "data": {},
+  "export_with": {
+    "data": true,
+    "button": true
+  }
+}

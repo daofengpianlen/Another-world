@@ -1,0 +1,18 @@
+{
+    "disabled": false,
+    "findRegex": "<gal>([\\s\\S]*?)<\\/gal>",
+    "id": "a6ea5fe0-eaa1-42e2-806e-5c8ae25b3cbd",
+    "markdownOnly": true,
+    "maxDepth": null,
+    "minDepth": null,
+    "placement": [
+        1,
+        2
+    ],
+    "promptOnly": false,
+    "replaceString": "<div style=\"background-color: white; border-radius: 20px; padding: 20px; max-width: 800px; margin: 15px auto; box-shadow: 0 8px 30px rgba(0,0,0,0.25); position: relative; overflow: hidden; border: 1.2px solid #EEE;\">\n  \n  <div style=\"position: absolute; top: 0; left: 0; width: 100%; transform: rotate(180deg); z-index: 1; opacity: 0.8;\">\n    <img src=\"https://files.catbox.moe/904ogs.png\" style=\"width: 100%; height: auto; display: block;\">\n  </div>\n\n  <div style=\"position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 40%; max-width: 200px; z-index: 2;\">\n    <img src=\"https://files.catbox.moe/527lb0.png\" style=\"width: 100%; height: auto; display: block;\">\n  </div>\n\n  <div style=\"position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 998; pointer-events: none;\">\n    <div style=\"position: absolute; z-index: 999; width: 50px; height: 50px; left: 10px;\">\n      <img src=\"https://files.catbox.moe/5adyal.png\" style=\"width: 100%; height: 100%; position: absolute; animation: bounce 5s linear infinite;\">\n    </div>\n    <div style=\"position: absolute; z-index: 999; width: 50px; height: 50px; right: 10px; bottom: 10px;\">\n      <img src=\"https://files.catbox.moe/g99n99.png\" style=\"width: 100%; height: 100%; position: absolute; animation: bounce 5s linear infinite;\">\n    </div>\n  </div>\n\n  <div style=\"min-height: 200px; padding-top: 130px; padding-bottom: 110px; position: relative; z-index: 5;\">\n    $1\n  </div>\n\n  <div style=\"position: absolute; bottom: 0; left: 0; right: 0; z-index: 1;\">\n    <img src=\"https://files.catbox.moe/904ogs.png\" style=\"width: 100%; height: auto; display: block;\">\n  </div>\n</div>\n\n<style>\n@keyframes bounce {\n  0% { left: 10px; top: 100px; transform: rotate(0deg); }\n  25% { left: calc(100% - 60px); top: 150px; transform: rotate(90deg); }\n  50% { left: calc(100% - 110px); top: calc(100% - 50px); transform: rotate(180deg); }\n  75% { left: 60px; top: calc(100% - 100px); transform: rotate(270deg); }\n  100% { left: 10px; top: 100px; transform: rotate(360deg); }\n}\n</style>",
+    "runOnEdit": true,
+    "scriptName": "鸭标签",
+    "substituteRegex": 0,
+    "trimStrings": []
+}

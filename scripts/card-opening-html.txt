@@ -1,0 +1,958 @@
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>战姬养成系统 - 训练家登记</title>
+
+  <!-- ========================================== -->
+  <!-- 📝 开场白模板区域 - 可直接修改内容 -->
+  <!-- ========================================== -->
+
+  <!-- 学生开局 -->
+  <template id="opening-student">
+# 战姬养成系统·学生开局
+2022年5月8日，星期日。
+
+丰之崎学园那条著名的长坡道，在夕阳的炙烤下泛着一层暖洋洋的光晕。樱花季早就过了，两旁的樱花树如今长满了浓密的绿叶，在地面投下斑驳的阴影。
+
+{playerName}背着书包，慢吞吞地往下走。他的脚步有些虚浮，眼神也不太聚焦。这倒不是因为他在思考期中考试的复习计划，而是因为那个一直悬浮在他视野右上角的半透明光屏。
+
+【系统加载完毕。】
+【欢迎玩家{playerName}，进入“校园战姬游戏”。】
+【当前持有：战姬捕捉球x6，初始抽卡机会x1。】
+
+“这也太突然了吧……”{playerName}小声嘀咕了一句，伸手在空气中虚抓了一把，手指穿过了光屏，什么也没摸到。周围三三两两结伴回家的学生从他身边经过，谈论着社团活动和新款游戏，完全没人注意到这个名为“{playerName}”的男生正在经历怎样的人生剧变。
+
+就在他走到坡道中段的时候，一个身影让他停下了脚步。
+
+那是一个女生，正站在路边的自动贩卖机前，低头看着手里的钱包，似乎在纠结买哪种饮料。她留着一头清爽的波波头，穿着丰之崎那套标志性的深蓝色制服，裙摆长度恰到好处。
+
+加藤惠。{playerName}认识她，或者说，班上大部分人都“认识”她，但又不怎么熟。她就像是班级里的背景板，虽然长得挺可爱，但总是没什么存在感，也不会像那些现充女生一样大声喧哗。
+
+“啊，{playerName}君。”
+
+似乎是察觉到了{playerName}的目光，加藤惠转过头，那张表情平淡的脸上浮现出一个礼貌的微笑，“真巧呢，你也才回家吗？”
+
+她的语气平平淡淡，就像是在谈论今天的天气，既不亲热也不冷漠，是那种最标准的、同学之间的距离感。
+
+“嗯，在教室多待了一会儿。”{playerName}下意识地回答，这种日常的对话让他紧绷的神经稍微放松了一些。
+
+“这样啊。”加藤惠轻轻点了点头，然后又把视线转回了自动贩卖机，“我在犹豫是买红茶还是乌龙茶呢，总感觉今天的红茶包装好像换了……”
+
+就在这无比平常、甚至有些琐碎的日常瞬间，{playerName}眼前的系统界面突然毫无征兆地炸开了。
+
+【⚠️ 特殊机遇触发！】
+【检测到可捕捉目标：加藤惠】
+【品质预测：？？？（潜质极高）】
+【状态：完全无防备】
+
+紧接着，那个红色的倒计时窗口再次弹了出来，直接覆盖了加藤惠那张没什么表情的脸庞。
+
+【检测到玩家持有“初始抽卡机会”。】
+【系统提议：是否消耗“初始抽卡机会”，将本次遭遇转化为“强制契约判定”？】
+【说明：目标对玩家无特殊戒心，判定环境极佳。若选择执行，将跳过战斗，直接进行收服判定。】
+【成功率：20%（若失败，目标将产生警觉，初始机会消耗不返还）】
+【决策时间：04:59... 04:58...】
+
+{playerName}愣住了。
+
+他看着眼前这个正微微歪着头，还在纠结饮料的女生。她那么普通，那么安静，仿佛只要一转眼就会融入背景里消失不见。和那种光芒万丈的校花不同，加藤惠给人的感觉是安全的、无害的，是可以随意搭话的。
+
+但正是这种“无害”，此刻却成了最大的诱惑。
+
+20%的概率。如果是别人的话，或许会立刻警觉或者逃跑，但如果是加藤惠……如果是这个总是波澜不惊、对什么都接受度很高的加藤惠，会不会容易一点？
+
+“{playerName}君？”加藤惠见他半天没动静，有些困惑地眨了眨眼，“你也要买饮料吗？如果不介意的话，我可以让你先买哦。”
+
+她侧过身，让出了自动贩卖机前的位置。这个动作自然又体贴，完全没有意识到自己已经被一个危险的猎手系统锁定了。
+
+{playerName}看着她毫无防备的侧脸，还有那截白皙的脖颈。夕阳在她的发梢跳跃，她手里还捏着几个硬币，等待着他的回应。
+
+系统的倒计时还在跳动：【04:30... 04:29...】
+
+心脏在胸腔里剧烈地鼓噪着。这是一个赌局。用唯一的新手福利，去赌这个看起来最不起眼、却又似乎深不可测的女生的未来。
+
+“加藤……”{playerName}感觉自己的声音有些干涩。
+
+“嗯？”加藤惠转过脸，那双平静的眸子倒映着{playerName}略显紧张的面孔，依然是那副波澜不惊的模样，“怎么了吗？”
+
+就在这一刻，平凡的日常与疯狂的非日常，在丰之崎的坡道上交汇了。
+  </template>
+
+  <!-- 社畜开局 -->
+  <template id="opening-worker">
+# 战姬养成系统·社畜开局
+
+我正准备关上电脑，结束这周最后一天的加班时，整个世界似乎在一瞬间静止了。
+
+窗外的余晖停在了半空，落地窗前那只正要飞过的鸽子像被时间冻结，连空中漂浮的灰尘都凝固不动。我能动，但感觉周围的一切都被按下了暂停键。
+
+"什么情况？"我试着站起来，惊讶地发现自己能够正常活动，而办公室里的其他一切都停滞不前。
+
+就在这时，一道蓝光在我眼前凭空出现，逐渐凝聚成一个半透明的界面。上面显示着几行文字：
+
+【宠物捕捉系统已激活】
+【用户：{playerName}】
+【身份：训练家】
+【状态：初始化中…】
+
+"训练家？宠物捕捉系统？"我伸手想触碰那个界面，发现它确实是可交互的，就像一块悬浮在空中的触摸屏。
+
+【初始化完成】
+【欢迎加入宠物捕捉系统】
+【您已被选为100名训练家之一】
+【系统说明开始播放…】
+
+一段语音在我脑海中响起，声音既像是从外部传来，又仿佛直接在我意识中生成：
+
+"宠物捕捉系统是一个特殊的力量体系，允许训练家通过专用捕捉球捕获女性作为宠物。每个宠物都拥有特定的元素属性、品质等级和战斗能力。训练家可以培养宠物提升其能力，参与对战获取资源，完成任务赢取奖励。"
+
+随着语音，界面上开始显示详细的图文说明，展示了捕捉球的使用方法、品质等级的划分(E到S)和元素属性的相克关系。
+
+我的心跳加速，这听起来像是某种超越现实的游戏，但又实实在在地出现在我面前。"所以…我可以捕捉女人作为宠物？"我试探性地问道。
+
+【肯定回应】
+【捕捉目标限定为女性】
+【捕获成功率取决于目标品质和训练家技巧】
+【初始资源分配中…】
+
+界面变化，显示出我的初始配置：
+
+捕捉球×6（普通）
+系统金币×0
+初始宠物抽取资格×1
+"抽取初始宠物？"我好奇地点击了这个选项。
+
+【请在24小时内完成初始宠物抽取】
+【抽取结果将决定您的开局优势】
+【警告：训练家失去全部宠物和捕捉球将被淘汰】
+【淘汰惩罚：成为胜利者的宠物】
+
+我咽了咽口水，系统的警告让我意识到这不仅仅是一场游戏，而是一场残酷的竞争。输家将成为胜利者的宠物，这意味着失败的代价极其沉重。
+
+界面继续展示着更多信息：宠物的培养机制、技能系统、对战规则…数据量庞大得让我一时难以完全消化。
+
+最后，系统提示我：
+
+【初始教程完成】
+【初始任务已发布：完成初始宠物抽取】
+【时间将在3秒后恢复正常】
+【祝您好运，训练家】
+
+随着倒计时结束，周围的时间恢复了流动。窗外的鸽子继续它的飞行，灰尘重新开始漂浮。但那个蓝色的系统界面依然悬浮在我眼前，只是变得更加透明，似乎只有我能看见它。
+
+我深吸一口气，感受着体内涌动的新力量。作为训练家，我即将开始一段全新的征程。
+
+"捕捉女人作为宠物…"我低声自语，嘴角不自觉地上扬，"这可比加班有趣多了。"
+
+我看了看手表，已经18:05分。办公室里只剩下我一个人。是时候离开这里，找个地方好好研究这个系统，并且…也许可以试试捕捉我的第一个宠物。
+  </template>
+
+  <!-- 家里蹲开局 -->
+  <template id="opening-neet">
+# 战姬养成系统·家里蹲开局
+
+2022年5月8日，星期日，傍晚。
+
+老旧的单元楼里弥漫着各家各户炒菜的油烟味，声控灯时灵时不灵，让狭窄的楼道显得有些昏暗。
+
+{playerName}背着书包，手里捏着刚从信箱里拿出来的水电费账单，一步步往楼上走。他的脚步很沉，不仅仅是因为爬了五层楼，更是因为视野里那个怎么也关不掉的蓝色光屏。
+
+【系统加载完毕。】
+【欢迎玩家{playerName}...】
+
+这种只在深夜漫画里看到的情节，真实地发生在了自己身上。他还在努力消化着“战姬”、“捕捉”这些离谱的概念，不知不觉已经走到了自家门口。
+
+正准备掏钥匙，对面的防盗门“咔哒”一声开了。
+
+“哎呀，放学啦？”
+
+一个温柔带着点慵懒的声音传来。{playerName}转过身，看见对门的温雅阿姨正提着两个满满当当的超市购物袋，费力地想要用手肘去顶开门。
+
+温雅，人如其名，是个温婉的女人。她是单身母亲，独自带着女儿住在对面。她女儿苏小雨和{playerName}是同班同学，还是那种虽然不怎么说话但长得特别漂亮的类型。母女俩长得很像，但温雅身上多了岁月沉淀下来的丰腴和成熟韵味。
+
+此时她穿着一件简单的居家针织衫，下面是一条宽松的长裙，头发随意地挽了个发髻，几缕碎发垂在耳边。因为提着重物，她的脸颊有些微红，胸口随着呼吸微微起伏。
+
+“温阿姨，我来帮您吧。”{playerName}下意识地把书包往肩上一提，快步走过去接过了她手里的袋子。
+
+入手很沉，看来是买了不少东西。
+
+“哎哟，真是谢谢你了。”温雅松了口气，抬手擦了擦额头的细汗，露出一个感激的笑容，“今天超市打折，一不小心就买多了。小雨这孩子还没回来，也不知道跑哪去了，还是小岚贴心。”
+
+她侧身让{playerName}进屋，那种熟透了的水蜜桃般的香气扑面而来，混合着一点点厨房的烟火气，让人莫名觉得安心。
+
+就在{playerName}把购物袋放在玄关柜上的瞬间，那个该死的、或者说美妙的系统光屏突然变成了刺眼的红色。
+
+【⚠️ 特殊机遇触发！】
+【检测到高品质目标：温雅】
+【品质预测：B（史诗）- ？？？】
+【特征：母性光辉、成熟韵味、极度护短】
+
+紧接着，那个让人心跳骤停的赌博选项再次弹了出来，像是一个恶魔的低语：
+
+【检测到玩家持有“初始抽卡机会”。】
+【系统提议：是否消耗“初始抽卡机会”，将本次遭遇转化为“强制契约判定”？】
+【说明：目标当前对玩家处于“毫无戒备”的长辈关怀状态，且处于私密空间（玄关）。】
+【成功率：20%（若失败，目标将产生极度恐慌与警惕，邻里关系可能破裂，初始机会消耗不返还）】
+【决策时间：04:59... 04:58...】
+
+{playerName}的手僵在了购物袋的提手上。
+
+他直起身，看着正在弯腰给他拿拖鞋的温雅。从这个角度，正好能看到她领口那一抹晃眼的白腻，还有那优美的背部曲线。
+
+这是一个疯狂的赌注。
+她是看着自己长大的邻居阿姨，是同学的妈妈。如果成功了，这个平日里温温柔柔的长辈，就会变成完全服从于自己的……战姬。那种身份倒错的背德感，简直像电流一样窜过脊背。
+
+但如果失败了呢？
+如果那20%没有发生，剩下的80%会让这一切变成什么样？她会尖叫，会报警，以后在楼道里见面会用看垃圾一样的眼神看自己，甚至连苏小雨都会知道……
+
+“怎么了？是不是袋子太勒手了？”温雅见他发呆，有些关切地直起身，凑近了一些。
+
+她伸出手，自然地想要去拍拍{playerName}的胳膊，就像以前无数次做过的那样。那只手白皙柔软，带着属于母亲的温度。
+
+【距离判定：极近】
+【成功率修正：当前状态稳定，维持20%】
+【决策时间：04:20... 04:19...】
+
+{playerName}看着近在咫尺的温雅，喉结艰难地滚动了一下。
+
+这五分钟，比他这辈子度过的任何时间都要漫长。是要做一个安分守己的好邻居、好同学，还是赌一把，把这个成熟美好的女人彻底据为己有？
+
+“温阿姨……”{playerName}的声音有些发颤，他甚至不知道自己下一秒会做出什么。
+
+温雅眼神温柔，毫无察觉地微笑着等待着他的下文，完全不知道自己已经站在了悬崖边上。
+  </template>
+
+  <!-- 不良少年开局 -->
+  <template id="opening-delinquent">
+# 战姬养成系统·不良少年开局
+
+你是{playerName}，街头的不良少年。
+
+2022年5月7日，深夜23:50。
+
+你刚和兄弟们在街角的便利店门口聊完天，骑着摩托车回家。
+
+红灯前停车时，手机突然震动，屏幕亮起诡异的白光。
+
+> 【战姬养成系统】正在绑定灵魂。
+> 训练家姓名：{playerName}
+> 身份：不良少年
+> 系统时间：2022年5月8日 00:00:00
+
+"什么玩意儿？"
+
+你皱眉，但下一瞬间，脑海中涌入的信息让你猛地握紧了车把。
+
+"战姬"、"捕捉"、"战斗"——这些概念像钢钉一样打进你的脑子。
+
+你靠边停车，打开手机，发现多了一个无法删除的APP。
+
+> 初始资源：捕捉球×6
+> 初始战姬抽取权×1
+> 保护期：30天
+
+你咧嘴一笑。
+
+作为街头混混，你见过的黑暗比普通人多得多。
+
+但这个"系统"，比任何黑帮都要更加冷酷无情。
+
+【战姬养成系统】的提示音在脑海中响起：
+
+> 欢迎加入，训练家·{playerName}。
+> 你已被记录为1000名选召者之一。
+> 从此刻起，你拥有捕捉人类女性并将其转化为「战姬」的能力。
+
+你点燃一根烟，看向空无一人的街道。
+
+你不是什么好人，你知道。
+
+但现在，你有了比拳头更强的力量。
+
+系统的警告让你眯起眼睛：
+
+> ⚠️ 警告：违反规则者，将被强制转化为战姬。
+> ⚠️ 警告：战败且无捕捉球者，将被剥夺资格并转化。
+
+"有意思。"
+
+你吐出一口烟雾。
+
+作为不良少年，你最擅长的就是在规则边缘游走。
+
+而这个游戏，正合你的胃口。
+
+你发动摩托车，在深夜的街道上狂飙。
+
+明天，你要去找那些平时看不起你的人。
+
+让她们跪下来，叫你"主人"。
+  </template>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    }
+
+   body {
+  background: linear-gradient(180deg, #4a90e2 0%, #e8f4f8 50%, #b8d4e8 100%);
+  width: 100%;
+  aspect-ratio: 1 / 1.4;  /* ✅ 根据宽度自动计算高度 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;  /* 减少边距，适配小屏 */
+  position: relative;
+  overflow: hidden;
+}
+
+
+    /* 云朵装饰 */
+body::before,
+body::after {
+  content: "";
+  position: absolute;
+  background: rgba(255, 255, 255, 0.5);  /* 降低透明度，减少遮挡感 */
+  border-radius: 50%;
+  z-index: 0;  /* 确保在容器下方 */
+}
+
+body::before {
+  width: clamp(80px, 15vw, 120px);  /* 响应式尺寸 */
+  height: clamp(25px, 5vw, 40px);
+  top: 8%;
+  left: 3%;
+  box-shadow: clamp(40px, 8vw, 60px) 0 0 rgba(255, 255, 255, 0.4),
+              clamp(20px, 4vw, 30px) -8px 0 rgba(255, 255, 255, 0.3);
+}
+
+body::after {
+  width: clamp(70px, 12vw, 100px);
+  height: clamp(20px, 4vw, 35px);
+  top: 18%;
+  right: 5%;
+  box-shadow: clamp(30px, 6vw, 50px) 0 0 rgba(255, 255, 255, 0.4),
+              clamp(15px, 3vw, 25px) -6px 0 rgba(255, 255, 255, 0.3);
+}
+
+
+   .container {
+  background: #fff;
+  border: 6px solid #2c3e50;  /* 减少边框宽度，移动端更友好 */
+  border-radius: 16px;
+  max-width: 100%;  /* 移除max-width限制，让它自适应 */
+  width: 95%;  /* 留出一点边距 */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+
+    /* 顶部装饰条 */
+    .header-bar {
+      background: linear-gradient(90deg, #e74c3c 0%, #f39c12 50%, #e74c3c 100%);
+      height: 12px;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .header {
+      text-align: center;
+      padding: 30px 20px 20px;
+      background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+      position: relative;
+    }
+
+    /* 精灵球装饰 */
+    .pokeball-deco {
+      width: 40px;
+      height: 40px;
+      background: #fff;
+      border-radius: 50%;
+      border: 4px solid #2c3e50;
+      position: absolute;
+      top: 20px;
+    }
+
+    .pokeball-deco.left {
+      left: 20px;
+    }
+
+    .pokeball-deco.right {
+      right: 20px;
+    }
+
+    .pokeball-deco::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      background: #2c3e50;
+      border-radius: 50%;
+      border: 2px solid #fff;
+    }
+
+    .pokeball-deco::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: #2c3e50;
+      transform: translateY(-50%);
+    }
+
+   .title {
+  font-size: clamp(24px, 5vw, 32px);  /* ✅ 响应式字体，最小24px，最大32px */
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+  margin-bottom: 8px;
+}
+
+
+    .subtitle {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.95);
+      font-weight: 500;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .label {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .label::before {
+      content: "▶";
+      color: #e74c3c;
+      font-size: 14px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      margin-bottom: 25px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 18px;
+      border: 3px solid #3498db;
+      border-radius: 12px;
+      font-size: 16px;
+      background: #f8f9fa;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: #2ecc71;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.2);
+    }
+
+    .selection-label {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .selection-label::before {
+      content: "★";
+      color: #f39c12;
+      font-size: 18px;
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .scenario-card {
+      border: 3px solid #ddd;
+      border-radius: 12px;
+      padding: 18px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #f8f9fa;
+      text-align: center;
+      position: relative;
+    }
+
+    .scenario-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .scenario-card.selected {
+      border-color: #2ecc71;
+      background: linear-gradient(135deg, #e8f8f5 0%, #d1f2eb 100%);
+    }
+
+    .scenario-card.selected::before {
+      content: "✓";
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 24px;
+      height: 24px;
+      background: #2ecc71;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .scenario-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .scenario-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 6px;
+    }
+
+    .scenario-desc {
+      font-size: 13px;
+      color: #7f8c8d;
+      line-height: 1.4;
+    }
+
+    .start-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .start-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(231, 76, 60, 0.5);
+    }
+
+    .start-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .start-btn:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .hint {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 13px;
+      color: #7f8c8d;
+      font-style: italic;
+    }
+
+    /* 底部装饰条 */
+    .footer-bar {
+      background: linear-gradient(90deg, #9b59b6 0%, #3498db 50%, #9b59b6 100%);
+      height: 10px;
+      border-radius: 0 0 12px 12px;
+    }
+
+@media (max-width: 600px) {
+  .title {
+    font-size: 24px;  /* 改为固定值，避免clamp冲突 */
+  }
+
+  .scenario-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;  /* 减少间距 */
+  }
+
+  .pokeball-deco {
+    width: 28px;
+    height: 28px;
+  }
+
+  .content {
+    padding: 20px;  /* 减少内边距 */
+  }
+
+  .label,
+  .selection-label {
+    font-size: 16px;  /* 减小字体 */
+  }
+
+  input[type="text"] {
+    padding: 12px 14px;  /* 减少内边距 */
+    font-size: 14px;
+  }
+
+  .start-btn {
+    font-size: 16px;  /* 减小按钮字体 */
+    padding: 14px;
+  }
+
+  .scenario-card {
+    padding: 14px;  /* 减少卡片内边距 */
+  }
+
+  .scenario-icon {
+    font-size: 28px;
+  }
+
+  .scenario-title {
+    font-size: 14px;
+  }
+
+  .scenario-desc {
+    font-size: 11px;
+  }
+}
+
+/* 超小屏幕优化 */
+@media (max-width: 400px) {
+  body {
+    padding: 10px;
+  }
+
+  .container {
+    border-width: 4px;  /* 进一步减少边框 */
+  }
+
+  .header {
+    padding: 20px 15px 15px;
+  }
+
+  .pokeball-deco {
+    width: 24px;
+    height: 24px;
+    top: 15px;
+  }
+
+  .pokeball-deco.left {
+    left: 15px;
+  }
+
+  .pokeball-deco.right {
+    right: 15px;
+  }
+}
+
+  </style>
+
+  <script type="module">
+    /* ========================================== */
+    /* 全局状态 */
+    /* ========================================== */
+    let selectedScenario = null;
+
+    /* ========================================== */
+    /* 身份映射配置（添加新身份时修改这里） */
+    /* ========================================== */
+    const IDENTITY_MAP = {
+      'student': '高中生',
+      'worker': '上班族',
+      'neet': '无业游民',
+      'delinquent': '不良少年'
+    };
+
+    /* ========================================== */
+    /* 核心函数：生成开场白（含变量更新指令） */
+    /* ========================================== */
+    function getOpeningText(scenario, playerName) {
+      const templateId = `opening-${scenario}`;
+      const template =   document.getElementById(templateId);
+
+      if (!template) {
+        return `# 错误\n\n未找到场景 ${scenario} 的开场白模板。`;
+      }
+
+      /* 获取模板内容并替换玩家名 */
+      let text = template.innerHTML.trim();
+      text = text.replace(/\{playerName\}/g, playerName);
+
+      /* 获取对应的身份 */
+      const identity = IDENTITY_MAP[scenario] || '训练家';
+
+      /* 在开场白末尾嵌入变量更新指令 */
+      text += `\n\n<UpdateVariable>
+<Analysis>
+- Time: 0 (game initialization at 00:00)
+- Player registered as "${playerName}" with identity "${identity}"
+- Initialize game start timestamp: 2022-05-08 00:00
+</Analysis>
+<JSONPatch>
+[
+  { "op": "replace", "path": "/玩家名", "value": "${playerName}" },
+  { "op": "replace", "path": "/训练家/身份", "value": "${identity}" }
+]
+</JSONPatch>
+</UpdateVariable>`;
+
+      return text;
+    }
+
+    /* ========================================== */
+    /* 发送开场白到聊天框 */
+    /* ========================================== */
+    function sendOpeningToChat(openingText) {
+      console.log('[启动器] 准备发送开场白');
+
+      /* 方式1: 使用 triggerSlash (参考轮回乐园的成功经验) */
+      if (typeof triggerSlash === 'function') {
+        triggerSlash(`/send ${openingText}|/trigger`);
+        console.log('[启动器] ✅ 已通过 triggerSlash 发送');
+        return true;
+      }
+
+      /* 方式2: 使用 SillyTavern 的全局 API */
+      if (typeof sendUserMessage === 'function') {
+        sendUserMessage(openingText);
+        console.log('[启动器] ✅ 已通过 sendUserMessage 发送');
+        return true;
+      }
+
+      /* 方式3: 直接操作输入框 */
+      try {
+        const $textarea = $('#send_textarea');
+        if ($textarea.length > 0) {
+          $textarea.val(openingText).trigger('input');
+          console.log('[启动器] ✅ 已填充到输入框');
+
+          /* 延迟点击发送按钮，确保输入框更新完成 */
+          setTimeout(() => {
+            const $sendBtn = $('#send_but');
+            if ($sendBtn.length > 0) {
+              $sendBtn.click();
+              console.log('[启动器] ✅ 已自动点击发送按钮');
+            }
+          }, 300);
+
+          return true;
+        }
+      } catch (e) {
+        console.error('[启动器] ❌ 输入框填充失败:', e);
+      }
+
+      /* 方式4: postMessage 通信 */
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'tavern_opening',
+            content: openingText
+          }, '*');
+          console.log('[启动器] ✅ 已通过 postMessage 发送');
+          return true;
+        }
+
+        if (window.opener) {
+          window.opener.postMessage({
+            type: 'tavern_opening',
+            content: openingText
+          }, '*');
+          console.log('[启动器] ✅ 已通过 opener.postMessage 发送');
+          return true;
+        }
+      } catch (e) {
+        console.error('[启动器] ❌ postMessage 失败:', e);
+      }
+
+      /* 方式5: 复制到剪贴板（兜底方案） */
+      try {
+        navigator.clipboard.writeText(openingText).then(() => {
+          alert('✅ 开场文本已复制到剪贴板！\n\n请粘贴到聊天框中发送。');
+          console.log('[启动器] ✅ 已复制到剪贴板');
+        });
+        return true;
+      } catch (e) {
+        console.error('[启动器] ❌ 剪贴板操作失败:', e);
+      }
+
+      /* 兜底：弹窗显示文本 */
+      alert('⚠️ 自动发送失败，请手动复制以下内容：\n\n' + openingText.substring(0, 200) + '...');
+      return false;
+    }
+
+    /* ========================================== */
+    /* 场景选择逻辑 */
+    /* ========================================== */
+    function setupScenarioSelection() {
+      $('.scenario-card').on('click', function() {
+        $('.scenario-card').removeClass('selected');
+        $(this).addClass('selected');
+        selectedScenario = $(this).data('scenario');
+        updateButtonState();
+      });
+    }
+
+    /* ========================================== */
+    /* 输入监听 */
+    /* ========================================== */
+    function setupInputListener() {
+      $('#playerName').on('input', updateButtonState);
+
+      /* 回车快捷键 */
+      $('#playerName').on('keypress', function(e) {
+        if (e.key === 'Enter' && !$('#startBtn').prop('disabled')) {
+          $('#startBtn').click();
+        }
+      });
+    }
+
+    /* ========================================== */
+    /* 按钮状态更新 */
+    /* ========================================== */
+    function updateButtonState() {
+      const hasName = $('#playerName').val().trim().length > 0;
+      const hasScenario = selectedScenario !== null;
+      $('#startBtn').prop('disabled', !(hasName && hasScenario));
+    }
+
+    /* ========================================== */
+    /* 开始游戏 */
+    /* ========================================== */
+    function startGame() {
+      const playerName = $('#playerName').val().trim();
+
+      if (!playerName || !selectedScenario) {
+        return;
+      }
+
+      /* 禁用按钮，防止重复点击 */
+      $('#startBtn').prop('disabled', true).text('正在启动系统...');
+
+      /* 生成开场白（已内置变量更新指令） */
+      const openingText = getOpeningText(selectedScenario, playerName);
+
+      /* 发送到聊天框 */
+      const success = sendOpeningToChat(openingText);
+
+      /* 更新按钮状态 */
+      if (success) {
+        setTimeout(() => {
+          $('#startBtn').text('✅ 启动完成！');
+          $('.hint').html('✨ 开场白已发送，AI正在初始化世界...<br><span style="font-size:11px;color:#95a5a6;">你可以关闭此状态栏了</span>');
+        }, 800);
+      } else {
+        setTimeout(() => {
+          $('#startBtn').prop('disabled', false).text('重新尝试');
+        }, 1500);
+      }
+    }
+
+    /* ========================================== */
+    /* 初始化 */
+    /* ========================================== */
+    async function init() {
+      try {
+        await waitGlobalInitialized('Mvu');
+        console.log('[启动器] Mvu已就绪');
+
+        setupScenarioSelection();
+        setupInputListener();
+
+        $('#startBtn').on('click', startGame);
+
+        console.log('[启动器] 初始化完成');
+      } catch (error) {
+        console.error('[启动器] 初始化失败:', error);
+      }
+    }
+
+    $(errorCatched(init));
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="header-bar"></div>
+
+    <div class="header">
+      <div class="pokeball-deco left"></div>
+      <div class="pokeball-deco right"></div>
+      <div class="title">战姬养成系统</div>
+      <div class="subtitle">训练家登记处</div>
+    </div>
+
+    <div class="content">
+      <div class="label">输入你的名字</div>
+      <div class="input-wrapper">
+        <input
+          type="text"
+          id="playerName"
+          placeholder="请输入你的真实姓名..."
+          maxlength="20"
+          autocomplete="off"
+        >
+      </div>
+
+      <div class="selection-label">选择你的开局</div>
+      <div class="scenario-grid">
+        <div class="scenario-card" data-scenario="student">
+          <div class="scenario-icon">🎒</div>
+          <div class="scenario-title">学生开局</div>
+          <div class="scenario-desc">高中生身份，在校园中觉醒</div>
+        </div>
+
+        <div class="scenario-card" data-scenario="worker">
+          <div class="scenario-icon">💼</div>
+          <div class="scenario-title">社畜开局</div>
+          <div class="scenario-desc">上班族身份，在公司中觉醒</div>
+        </div>
+
+        <div class="scenario-card" data-scenario="neet">
+          <div class="scenario-icon">🏠</div>
+          <div class="scenario-title">家里蹲开局</div>
+          <div class="scenario-desc">NEET身份，在家中觉醒</div>
+        </div>
+
+        <div class="scenario-card" data-scenario="delinquent">
+          <div class="scenario-icon">😎</div>
+          <div class="scenario-title">不良少年开局</div>
+          <div class="scenario-desc">混混身份，在街头觉醒</div>
+        </div>
+      </div>
+
+      <button class="start-btn" id="startBtn" disabled>开始冒险</button>
+      <div class="hint">请输入姓名并选择开局场景</div>
+    </div>
+
+    <div class="footer-bar"></div>
+  </div>
+</body>
+</html>
+```

@@ -1,0 +1,160 @@
+---
+MVU格式要求:
+  优先级: |-
+    本条目为鸣潮 MVU 总纲。与下列条目冲突时，按此顺序为准：
+    1. 本条目（MVU格式要求）
+    2. [mvu_update]变量更新规则
+    3. [mvu_update]变量输出格式
+    4. [mvu_update]变量列表（结构定义）
+    5. initvar（第 0 楼初始值，非 AI 输出模板）
+
+  概述: |-
+    鸣潮角色卡使用 MVU 框架，所有游玩数据存放在各消息楼层的 stat_data 中。
+    - 第 0 楼：由 initvar 初始化（世界书条目含 [initvar]，保持禁用/蓝灯）
+    - 开场：开场面板改写 _storyState、主角信息、NPC漂泊者、剧情显示、女性角色骨架
+    - 游玩：每条 assistant 剧情回复末尾通过 <UpdateVariable><JSONPatch> 增量更新
+    - 解析：Mvu.parseMessage → zod Schema 校验与 prefault 缺字段补全
+    - 读取：手机「状态/剧情/好友/信息」与浪潮状态栏读取 stat_data，并合并**最新** assistant 消息的 JSONPatch
+
+  必备世界书条目:
+    - "[initvar]…" → initvar.yaml（第 0 楼，禁用）
+    - "[mvu_update]变量列表" → stat_data 完整结构与字段说明（AI 不得自创键名）
+    - "[mvu_update]变量更新规则" → 各字段何时 replace/add/insert/delta
+    - "[mvu_update]变量输出格式" → <UpdateVariable> 输出模板（AI 必须照此格式）
+    - "MVU格式要求" → 本条目
+    - "GAL输出格式" → 伪同层标签与 pic 规则
+    - "[mvu_gal]CG插入规范" → 各角色 CG 场景名白名单（禁止编造 pic）
+    - 示例：完整首楼回复示例 · 小爱界面完整输出示例 · 日常亲密场景完整输出示例
+
+  必备脚本:
+    - 鸣潮变量结构（zod schema + heroineGuard，补全 insert 缺字段）
+    - 鸣潮开场 / 鸣潮伪同层 / 鸣潮手机（按需）
+
+  assistant_完整回复顺序_不可打乱:
+    1. <gal>…</gal>（剧情正文，必填）
+    2. <options>…</options>（快捷建议，可选）
+    3. <StatusPlaceHolderImpl/>（占位，建议保留）
+    4. <UpdateVariable>…</UpdateVariable>（有 stat_data 变化时**必填**）
+
+  UpdateVariable_外壳格式:
+    固定结构: |-
+      <UpdateVariable>
+      <Analysis>英文简述：时间流逝、变化内容、变化原因（≤80 词）</Analysis>
+      <JSONPatch>
+      [ …JSON 数组… ]
+      </JSONPatch>
+      </UpdateVariable>
+    硬性要求:
+      - JSONPatch 必须是**合法 JSON 数组**，每项含 op、path、value（delta 用 value 表增减量）
+      - path 以 / 开头，对应 stat_data **根键**，禁止 /stat_data/当前时间 这种双层前缀
+      - 禁止输出 markdown 代码块包裹 JSONPatch
+      - 禁止省略 </JSONPatch> 或 </UpdateVariable>
+
+  JSONPatch_支持的操作:
+    replace: 修改已有路径的值（日常最常用）
+    add: 新增路径；首登场 /contact/{名} 推荐 add
+    insert: 与 add 类似；首登场 /女性角色/{名}、数组 /剧情触发器/- 可用 insert 或 add
+    remove: 删除路径或数组元素
+    delta: 数值增减（好感度等）；**同一 JSONPatch 内勿对同一路径既 insert/add 又 delta**
+    move: 移动数组元素（少用）
+
+  路径规则:
+    根字段: /当前时间 、 /所在地点 、 /主角信息/当前状态
+    女性角色: /女性角色/{角色名}/好感度 、 /女性角色/{角色名}/生理状态/阴道润滑
+    contact_可选: /contact/{角色名} 、 /contact/{角色名}/physiological/nipple
+    数组追加: /剧情触发器/- 、 /伏笔/- 、 /主角信息/物品栏/{物品名}
+    只读_禁止_AI_修改:
+      - /_storyState/*（开场面板维护）
+      - /指令/*（系统/世界书剧情指令驱动）
+      - /剧情显示（通常由 _storyState + STORY_MAP 自动同步，AI 一般勿 replace）
+
+  stat_data_权威结构:
+    说明: |-
+      AI **只能**读写「变量列表」与 initvar 中已定义的键名与嵌套结构。
+      **禁止**自创根键（如 /角色状态、/contacts、/friends）。
+      **禁止**写入头像 URL、立绘 URL、catbox 链接；前端按角色名匹配本地 assets。
+    根字段一览:
+      - 当前时间、所在地点、剧情显示、是否为后日谈
+      - 当前长期目标、当前演绎事件、当前演绎事件节点、即将进行的下一个事件节点
+      - 已完成的上一个事件、已完成的上一个事件节点、章节终止条件
+      - 主角信息、NPC漂泊者、女性角色、剧情触发器、伏笔
+      - _storyState、指令（只读）
+      - contact（可选 legacy，不在 initvar 预置）
+
+  女性角色_HeroineEntry_必填子结构:
+    说明: |-
+      每个 /女性角色/{名} 必须符合下列完整结构（首登场 add/insert 时一次写入；骨架已存在时用 replace 补全）。
+      键名必须为中文，与下表完全一致。
+    字段:
+      基础信息: { 角色名字, 身高, 罩杯, 外貌, 是否为处女 }
+      是否在场: '"true" | "false"'（字符串，非 JSON boolean 亦可）
+      声痕位置: string
+      当前穿着: { 上装, 下装, 饰品, 其它 } 或 string
+      好感度: number（0~100，手机人际关系粉色 ❤）
+      额外信息: { 角色称号, 内心想法 }
+      特写: [{ 部位, 描写 }, …]（无特写时 []）
+      物品: string
+      性爱状态: { 是否正在性爱, 高潮进度, 高潮计数, _高潮次数上限 }
+      生理状态: { 阴道润滑, 乳头状态, 阴蒂状态, 子宫状态, 是否怀孕 }
+      乳头状态_取值: 平软 | 正常 | 微微挺立 | 挺立 | 充血挺立（禁止「勃起」）
+      是否为处女_破处: 输出 <pic>破处</pic> 时同条 JSONPatch 必须 replace 为 false（见变量更新规则）
+      私密资料: { 性爱经验, 偏爱玩法, 持久痕迹, 性爱日志[], 性交次数, 性伴侣数 }
+
+  双轨_contact_与_女性角色:
+    最低要求: |-
+      **至少**写入 /女性角色/{名}，否则手机好友列表为空。
+    推荐双写: |-
+      角色首次重要登场时，同时 add /女性角色/{名} + add /contact/{名}（角色名与 GAL `<z>` 内角色名一致）。
+    分工:
+      - 女性角色：MVU 主结构；称号、内心、特写、物品、声痕、性爱状态、生理状态（中文键）、私密资料
+      - contact：legacy 小爱结构；appearance/clothing/physiological（英文键）、interaction_records
+    merge_规则: |-
+      手机 merge 两者展示。contact 的外观/服装/physiological 优先；女性角色 补全 MVU 专有字段。
+      仅写 女性角色.生理状态 时，手机自动映射到详情页 🩺 生理状态。
+      好感度：女性角色.好感度 与 contact.relationship.affection 建议保持一致。
+
+  占位符与首楼强制 replace:
+    schema_默认: 缺字段 prefault 为 "等待AI填入"
+    AI_禁止输出: |-
+      - 禁止把 "等待AI填入"、"等待AI根据用户设定补全…" 等占位符当作最终 value 写入 replace
+      - 禁止留空字符串给首楼必填字段（当前时间、所在地点、章节演绎字段、主角当前状态等）
+    首楼_必须 replace_为真实剧情文本:
+      - 当前时间、所在地点、当前长期目标
+      - 当前演绎事件、当前演绎事件节点、即将进行的下一个事件节点、章节终止条件
+      - 主角信息.当前状态、主角信息.当前穿着
+      - 各登场 女性角色：基础信息、穿着、额外信息、生理状态、（有则）特写
+    开场面板已预置骨架时: |-
+      第 0 楼已有 女性角色.{名} 骨架（好感度 10）→ 首楼用 **replace** 补字段，勿重复 add 同名键。
+
+  布尔与数值:
+    是否在场_是否为后日谈: 建议字符串 "true" / "false"
+    好感度: 0~100 整数；日常互动 delta ±(3~8)
+    高潮进度: 0~100；高潮计数: 0~999
+
+  GAL_与变量_一致性:
+    - `<z>` **仅限** stat_data.女性角色 中的女性；内名与 /女性角色/{名} **全名一致**（禁止单字简称）
+    - **{{user}} / 漂泊者 / 玩家本人** → **只能** `<other>`，**禁止** `<z>` 与 pic
+    - **女性角色** 在 GAL 中**只能** `<z>`，**禁止** `<other>` / `<j>`
+    - **男性 NPC**（伤痕、忌炎等）：**禁止** /女性角色/{男性名}；**只能** `<other>`；人设靠世界书 👤♂️ 条目
+    - `<other>` 亦用于路人；name 不必对应 MVU 键
+    - 剧情中角色离场：replace /女性角色/{名}/是否在场 为 "false"
+    - 角色死亡（若剧情需要）：contact.end_flag 为 "died"
+
+  何时必须输出_UpdateVariable:
+    必须: 每条含 <gal> 的剧情回复末尾**都要**输出 UpdateVariable（禁止在 StatusPlaceHolderImpl 后结束）
+    含: 时间/地点、好感、穿着、物品、章节、角色登场、亲密/性爱、生理状态、内心想法、触发器/伏笔
+    可省略: 纯 OOC 且无 stat 变化（极少见）
+
+  禁止截断:
+    错误: </gal> + <StatusPlaceHolderImpl/> ← 结束
+    正确: </gal> + <StatusPlaceHolderImpl/> + <UpdateVariable>…</UpdateVariable>
+    pic: 禁止 i75k8e.mp4；须写 手交、日常 等本地 CG 场景名
+
+  详见:
+    变量列表: 全字段类型、默认值、界面映射、HeroineEntry 完整 YAML 模板
+    变量更新规则: 各字段 replace/insert/delta 判定
+    变量输出格式: 可直接复制的 JSONPatch 金标准
+    initvar.yaml: 第 0 楼 stat_data 初始骨架
+    完整首楼回复示例: GAL + UpdateVariable 对照范例
+    日常亲密场景完整输出示例: 亲密互动 GAL + 完整 UpdateVariable（禁止截断）
+    小爱界面完整输出示例: 开场双角色 + 完整 UpdateVariable

@@ -1,0 +1,258 @@
+---
+变量列表:
+  说明: |-
+    【权威结构定义】本条目定义 stat_data 全部键名、类型、默认值与手机界面映射。
+    AI 读写变量时**只能**使用本条目与 initvar 中的键名；禁止自创根键或改键名。
+    运行时当前值由下方 <status_current_variable> 注入；zod 定义见项目 schema.ts。
+    配套条目：initvar · MVU格式要求 · 变量输出格式 · 变量更新规则 · GAL输出格式。
+
+  stat_data_根结构:
+    type: object
+    子字段:
+
+      当前时间:
+        type: string
+        默认: ""
+        AI: replace
+        示例: "今州历·云陵谷 08:30"
+        界面: 手机「状态」顶栏 · 浪潮状态栏
+
+      所在地点:
+        type: string
+        默认: ""
+        AI: replace
+        示例: "瑝珑-今州·云陵谷·临溪草坡"
+        界面: 手机「状态」顶栏
+
+      剧情显示:
+        type: string
+        默认: ""
+        AI: 只读（_storyState + STORY_MAP 自动同步）
+        示例: "v1.0 Part 1: 万象新声"
+        界面: 手机「状态」「剧情」
+
+      是否为后日谈:
+        type: '"true" | "false"'
+        默认: "false"
+        AI: 只读（开场/指令系统）
+        界面: 手机「剧情」
+
+      当前长期目标:
+        type: string
+        默认: ""
+        AI: replace（章节切换或目标变更时）
+        界面: 手机「状态」「剧情」
+
+      当前演绎事件:
+        type: string
+        默认: ""
+        AI: replace
+        说明: 当前章节/大事件名
+        界面: 手机「剧情」
+
+      当前演绎事件节点:
+        type: string
+        默认: ""
+        AI: replace
+        说明: 当前小节/节点
+        界面: 手机「剧情」
+
+      即将进行的下一个事件节点:
+        type: string
+        默认: ""
+        AI: replace
+        界面: 手机「剧情」
+
+      已完成的上一个事件:
+        type: string
+        默认: ""
+        AI: replace（章节切换时写入旧事件）
+        界面: 手机「剧情」
+
+      已完成的上一个事件节点:
+        type: string
+        默认: ""
+        AI: replace
+        界面: 手机「剧情」
+
+      章节终止条件:
+        type: string
+        默认: ""
+        AI: replace
+        界面: 手机「剧情」
+
+      主角信息:
+        type: object
+        AI: 部分 replace
+        子字段:
+          是否是漂泊者: { type: boolean|string, 默认: true, AI: 只读 }
+          性别: { type: string, 默认: "男", AI: 只读 }
+          身份与额外设定: { type: string, AI: 开局/重大身份揭露时 replace }
+          当前状态: { type: string, 默认: "", AI: replace }
+          当前穿着: { type: string | WearObject, 默认: "", AI: replace }
+          性爱状态:
+            type: object
+            子字段:
+              是否正在性爱: { type: boolean|string, 默认: false }
+              高潮进度: { type: number, 范围: 0~100, 默认: 0 }
+              高潮计数: { type: number, 范围: 0~999, 默认: 0 }
+              _高潮次数上限: { type: number, 范围: 1~99, 默认: 5 }
+          物品栏:
+            type: Record<物品名, InventoryItem>
+            InventoryItem: { 数量: number, 描述: string, 类型: string }
+            AI: insert /主角信息/物品栏/{名} 或 delta 数量
+            界面: 手机「状态」物品栏
+
+      NPC漂泊者:
+        type: object
+        AI: 只读
+        子字段:
+          是否存在: { type: boolean|string, 默认: false }
+          性别: { type: string, 默认: "女" }
+
+      女性角色:
+        type: Record<角色名, HeroineEntry>
+        默认: {}
+        AI: add/insert 首登场；replace/delta 已登场
+        界面: 手机「状态」人际关系 ·「好友」·「信息」
+        说明: 无 insert/add 则好友列表为空
+
+      剧情触发器:
+        type: array<TriggerItem>
+        默认: []
+        TriggerItem: { 事件类别, 事件简述, 状态, 事件计时 }
+        AI: insert /剧情触发器/-
+        界面: 手机「剧情」明线
+
+      伏笔:
+        type: array<ForeshadowItem>
+        默认: []
+        ForeshadowItem: { 伏笔内容, 指向的预期结果 }
+        AI: insert /伏笔/-
+        界面: 手机「剧情」暗线
+
+      _storyState:
+        type: { majorVerIdx, partIdx, isPostScript, _anchorVer }
+        AI: 只读
+        说明: 开场面板维护
+
+      指令:
+        type: { 推进剧情, 跳转版本, 修改后日谈模式为 }
+        AI: 只读
+
+      contact:
+        type: Record<角色名, LegacyContact>
+        默认: 不在 initvar 预置
+        AI: 可选 add/replace
+        说明: legacy 小爱结构，与 女性角色 双写时手机 merge
+
+  HeroineEntry_完整模板:
+    说明: |-
+      每个女性角色的**标准结构**。首登场 add/insert 时必须包含全部键（值可据剧情填写）。
+      开场面板预置骨架后，首楼用 replace 补全下列仍为 "等待AI填入" 的字段。
+    YAML: |-
+      基础信息:
+        角色名字: "{角色名}"
+        身高: "168cm"
+        罩杯: "C罩杯"
+        外貌: "外貌描写"
+        是否为处女: true
+        说明_处女: 破处 CG/初次性交后必须 replace 为 false（见变量更新规则·破处场景）
+      是否在场: "true"
+      声痕位置: "声痕位置描写"
+      当前穿着:
+        上装: "上装描写"
+        下装: "下装描写"
+        饰品: "饰品描写"
+        其它: "其它穿着"
+      好感度: 10
+      性欲: 0
+      说明_性欲: 0~100 日常情感值，随亲密互动/撩拨增加，冷落可下降；与高潮进度（性爱场景 arousal）不同
+      额外信息:
+        角色称号: "称号"
+        内心想法: "当前内心独白"
+      特写:
+        - 部位: "部位名"
+          描写: "特写描写"
+      物品: "携带物品"
+      性爱状态:
+        是否正在性爱: false
+        高潮进度: 0
+        高潮计数: 0
+        _高潮次数上限: 5
+      生理状态:
+        阴道润滑: "干燥"
+        乳头状态: "平软"
+        说明_乳头: 平软/正常/微微挺立/挺立/充血挺立；禁止「勃起」
+        阴蒂状态: "正常"
+        子宫状态: "正常"
+        是否怀孕: false
+      私密资料:
+        性爱经验: "无"
+        偏爱玩法: "无"
+        持久痕迹: "无"
+        性交次数: 0
+        性伴侣数: 0
+        性爱日志: []
+        说明_性交次数: 与该角色每次完整阴道性交结束 +1；手机「性交次数」显示此字段（≠高潮计数）
+        说明_性伴侣数: 该角色累计性伴侣人数；与 user 首次性交且此前无性伴侣时 replace 为 1
+
+  LegacyContact_可选模板:
+    说明: 与 HeroineEntry 双写时使用；键名为英文
+    JSON: |-
+      {
+        "end_flag": "active",
+        "appearance": {
+          "height": "168cm",
+          "hair_color": "发色",
+          "body_type": "体型",
+          "description": "外貌补充"
+        },
+        "clothing": {
+          "top": "上装",
+          "bottom": "下装",
+          "stockings": "裤袜",
+          "accessories": "饰品"
+        },
+        "relationship": { "affection": 60, "sexual_desire": 0 },
+        "location_info": { "current_location": "地点", "is_nearby": true },
+        "sexual_experience": { "virgin": true, "sex_count": 0, "partner_count": 0 },
+        "physiological": {
+          "vaginal_lubrication": "干燥",
+          "nipple": "平软",
+          "clitoris": "正常",
+          "uterus": "正常",
+          "pregnancy": false
+        },
+        "interaction_records": "互动记录字符串，分号分隔多事件"
+      }
+
+  生理状态_中英映射:
+    女性角色.生理状态.阴道润滑 ↔ contact.physiological.vaginal_lubrication
+    女性角色.生理状态.乳头状态 ↔ contact.physiological.nipple
+    女性角色.生理状态.阴蒂状态 ↔ contact.physiological.clitoris
+    女性角色.生理状态.子宫状态 ↔ contact.physiological.uterus
+    女性角色.生理状态.是否怀孕 ↔ contact.physiological.pregnancy
+
+  手机界面_字段对照:
+    状态_顶栏: 当前时间 · 所在地点
+    状态_人际关系: 女性角色.*.好感度（粉色 ❤ + 数值）
+    状态_主角档案: 主角信息.*
+    状态_剧情概览: 剧情显示 · 当前长期目标 · 当前演绎事件/节点
+    剧情_命途航标: 当前长期目标 · 章节演绎字段 · 章节终止条件
+    剧情_触发器: 剧情触发器[]
+    剧情_伏笔: 伏笔[]
+    好友_列表: merge(女性角色 → contact)
+    好友_详情: 额外信息 · 特写 · 物品 · 声痕 · 性爱状态 · 生理状态 · 私密资料（性交次数/性伴侣数）· contact 外观
+
+  JSONPatch_路径速查:
+    根: /当前时间 、 /所在地点 、 /当前长期目标
+    主角: /主角信息/当前状态 、 /主角信息/物品栏/{物品名}
+    女性: /女性角色/{名}/好感度 、 /女性角色/{名}/性欲 、 /女性角色/{名}/生理状态/阴道润滑 、 /女性角色/{名}/私密资料/性交次数
+    contact: /contact/{名} 、 /contact/{名}/physiological/nipple
+    数组: /剧情触发器/- 、 /伏笔/-
+
+---
+<status_current_variable>
+{{format_message_variable::stat_data}}
+</status_current_variable>
