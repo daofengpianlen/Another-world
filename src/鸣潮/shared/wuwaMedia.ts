@@ -89,36 +89,20 @@ export const WUWA_DEFAULT_CDN_ASSETS_BASE =
   'https://media.githubusercontent.com/media/daofengpianlen/-/main/dist/鸣潮/assets/';
 
 export function resolveWuwaAssetsBase(): string {
-  if (typeof document === 'undefined') return '';
-
-  // 1) 优先从脚本自身的加载 URL 动态推导 assets 路径
-  //    例如 jsDelivr URL → 对应的 GitHub media URL，同 repo 同 commit
-  const fromPerf = assetsBaseFromPerformance();
-  if (fromPerf) return fromPerf;
-
-  // 2) 其次检查自己窗口上 publishWuwaAssetsBase 设置的值
-  //    注意：不检查 window.parent，避免读到旧会话的陈旧值
-  if (window.__WUWA_ASSETS_BASE__) {
-    return normalizeAssetsBase(window.__WUWA_ASSETS_BASE__);
-  }
-
-  // 3) 最后回退到硬编码默认值
   return normalizeAssetsBase(WUWA_DEFAULT_CDN_ASSETS_BASE);
 }
 
 export function publishWuwaAssetsBase(): void {
-  const base = resolveWuwaAssetsBase();
-  if (base) {
-    window.__WUWA_ASSETS_BASE__ = base;
-    try {
-      if (window.parent && window.parent !== window) {
-        window.parent.__WUWA_ASSETS_BASE__ = base;
-      }
-    } catch {
-      /* ignore */
+  const base = normalizeAssetsBase(WUWA_DEFAULT_CDN_ASSETS_BASE);
+  window.__WUWA_ASSETS_BASE__ = base;
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.__WUWA_ASSETS_BASE__ = base;
     }
-    console.info('[鸣潮资源] 资源根路径', base);
+  } catch {
+    /* ignore */
   }
+  console.info('[鸣潮资源] 资源根路径', base);
   window.__WUWA_RESOLVE_MEDIA__ = resolveWuwaMediaUrl;
 }
 
