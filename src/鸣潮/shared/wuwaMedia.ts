@@ -105,19 +105,17 @@ export function resolveWuwaAssetsBase(): string {
 }
 
 export function publishWuwaAssetsBase(): void {
-  const base = resolveWuwaAssetsBase();
-  if (base) {
-    const normalized = normalizeAssetsBase(base);
-    window.__WUWA_ASSETS_BASE__ = normalized;
-    try {
-      if (window.parent && window.parent !== window) {
-        window.parent.__WUWA_ASSETS_BASE__ = normalized;
-      }
-    } catch {
-      /* ignore */
+  // 始终以硬编码 CDN 为基准发布，避免从 window.parent 读取到旧会话的陈旧值
+  const base = normalizeAssetsBase(WUWA_DEFAULT_CDN_ASSETS_BASE);
+  window.__WUWA_ASSETS_BASE__ = base;
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.__WUWA_ASSETS_BASE__ = base;
     }
-    console.info('[鸣潮资源] 资源根路径', normalized);
+  } catch {
+    /* ignore */
   }
+  console.info('[鸣潮资源] 资源根路径', base);
   window.__WUWA_RESOLVE_MEDIA__ = resolveWuwaMediaUrl;
 }
 

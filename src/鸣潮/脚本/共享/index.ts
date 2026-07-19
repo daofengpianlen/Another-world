@@ -27,19 +27,10 @@ function resolveWuwaPic(picRef: string, characterName?: string): string {
 }
 
 $(async () => {
-  await Promise.race([
-    waitGlobalInitialized('Mvu'),
-    new Promise<void>(resolve => setTimeout(resolve, 8000)),
-  ]);
-
+  // 立即暴露 pic 解析（不依赖 MVU，让 regex 替换脚本第一时间可用）
   errorCatched(() => {
     window.__WUWA_ASSETS_BASE__ = WUWA_DEFAULT_CDN_ASSETS_BASE;
     publishWuwaAssetsBase();
-    ensureWuWaSharedRegistered();
-    exposeWuwaConsoleTools();
-    heroine_guard_cleanups = registerHeroineGuard();
-
-    // 向宿主页面暴露 pic 解析函数（供 regex 替换脚本等使用）
     const resolvePic = resolveWuwaPic;
     window.__WUWA_RESOLVE_PIC__ = resolvePic;
     try {
@@ -49,6 +40,17 @@ $(async () => {
     } catch {
       /* cross-origin */
     }
+  })();
+
+  await Promise.race([
+    waitGlobalInitialized('Mvu'),
+    new Promise<void>(resolve => setTimeout(resolve, 8000)),
+  ]);
+
+  errorCatched(() => {
+    ensureWuWaSharedRegistered();
+    exposeWuwaConsoleTools();
+    heroine_guard_cleanups = registerHeroineGuard();
 
     console.info('[鸣潮共享] 已加载（控制台: await __WUWA_REPAIR_HEROINES__("秧秧")）');
   })();

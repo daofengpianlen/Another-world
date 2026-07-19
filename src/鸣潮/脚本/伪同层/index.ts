@@ -87,12 +87,6 @@ function initPseudoLayerHub() {
   exposeWuwaConsoleTools();
 
   let heroine_guard_cleanups: EventOnReturn[] = [];
-  try {
-    heroine_guard_cleanups = registerHeroineGuard();
-  } catch (error) {
-    console.warn('[鸣潮伪同层] heroineGuard 注册失败（继续挂载界面）', error);
-  }
-
   let stopHub: (() => void) | null = null;
 
   function attachHub(force_remount = false) {
@@ -177,6 +171,16 @@ function initPseudoLayerHub() {
     } catch {
       /* MVU 可选 */
     }
+
+    // 注册 heroineGuard（依赖 Mvu，必须在 Mvu 就绪后调用）
+    if (typeof Mvu !== 'undefined') {
+      try {
+        heroine_guard_cleanups = registerHeroineGuard();
+      } catch (error) {
+        console.warn('[鸣潮伪同层] heroineGuard 注册失败（继续挂载界面）', error);
+      }
+    }
+
     scheduleEnsureHub();
 
     try {
