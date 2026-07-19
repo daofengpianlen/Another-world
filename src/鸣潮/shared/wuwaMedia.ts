@@ -89,18 +89,8 @@ export const WUWA_DEFAULT_CDN_ASSETS_BASE =
   'https://media.githubusercontent.com/media/daofengpianlen/-/main/dist/鸣潮/assets/';
 
 export function resolveWuwaAssetsBase(): string {
-  if (typeof document === 'undefined') return '';
-
-  const wins: Window[] = [];
-  try {
-    if (window.parent !== window) wins.push(window.parent);
-  } catch { /* ignore */ }
-  wins.push(window);
-
-  for (const win of wins) {
-    if (win.__WUWA_ASSETS_BASE__) return normalizeAssetsBase(win.__WUWA_ASSETS_BASE__);
-  }
-
+  // 直接使用硬编码 CDN，不再检查 window / window.parent 上的 __WUWA_ASSETS_BASE__，
+  // 避免热重载时读取到旧会话残留的陈旧值。
   return normalizeAssetsBase(WUWA_DEFAULT_CDN_ASSETS_BASE);
 }
 
