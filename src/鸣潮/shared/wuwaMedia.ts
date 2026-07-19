@@ -88,7 +88,7 @@ const DEV_SERVE_ASSETS_BASE = `http://127.0.0.1:5500/dist/${WUWA_PROJECT_SEGMENT
 
 /** 云酒馆 CDN 部署默认资源根（webpack 会把 import.meta.url 烘焙为 file://，线上无法据此推断） */
 export const WUWA_DEFAULT_CDN_ASSETS_BASE =
-  'https://media.githubusercontent.com/media/daofengpianlen/-/main/dist/鸣潮/assets/';
+  'https://media.githubusercontent.com/media/daofengpianlen/Another-world/main/src/鸣潮/assets/';
 
 function isLocalDevHost(): boolean {
   try {
@@ -97,6 +97,34 @@ function isLocalDevHost(): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * 真正的本地开发模式：host 是 localhost（SillyTavern 本身），
+ * 且至少有一个 script 从 127.0.0.1:5500 或 localhost:5500 加载
+ * （即 Live Server / webpack-dev-server 正在运行）。
+ * 避免 SillyTavern 本地运行但脚本从 CDN 加载时误判为本地开发。
+ */
+function isLocalDevMode(): boolean {
+  if (!isLocalDevHost()) return false;
+
+  // 优先检查 Performance API（当前 iframe 的已加载资源）
+  try {
+    if (typeof performance !== 'undefined') {
+      const entries = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
+      if (entries.some(e => /(?:127\.0\.0\.1|localhost):5500/.test(e.name))) return true;
+    }
+  } catch { /* ignore */ }
+
+  // 降级：检查 DOM 中是否有 5500 端口的脚本
+  try {
+    const scripts = document.querySelectorAll<HTMLScriptElement>('script[src]');
+    for (const s of scripts) {
+      if (/(?:127\.0\.0\.1|localhost):5500/.test(s.getAttribute('src') ?? '')) return true;
+    }
+  } catch { /* ignore */ }
+
+  return false;
 }
 
 export function resolveWuwaAssetsBase(): string {
@@ -127,7 +155,7 @@ export function resolveWuwaAssetsBase(): string {
   }
 
   /* 本地开发优先：避免 Performance API / DOM script 被 CDN 残留条目劫持 */
-  if (HAS_LOCAL_MEDIA && isLocalDevHost()) return DEV_SERVE_ASSETS_BASE;
+  if (HAS_LOCAL_MEDIA && isLocalDevMode()) return DEV_SERVE_ASSETS_BASE;
 
   const fromPerformance = assetsBaseFromPerformance();
   if (fromPerformance) return fromPerformance;
