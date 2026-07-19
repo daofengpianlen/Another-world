@@ -86,7 +86,7 @@ function assetsBaseFromPerformance(): string | null {
 
 
 export const WUWA_DEFAULT_CDN_ASSETS_BASE =
-  'https://media.githubusercontent.com/media/daofengpianlen/Another-world/main/src/鸣潮/assets/';
+  'https://media.githubusercontent.com/media/daofengpianlen/-/main/dist/鸣潮/assets/';
 
 export function resolveWuwaAssetsBase(): string {
   if (typeof document === 'undefined') return '';
@@ -94,42 +94,11 @@ export function resolveWuwaAssetsBase(): string {
   const wins: Window[] = [];
   try {
     if (window.parent !== window) wins.push(window.parent);
-  } catch {
-    /* ignore */
-  }
+  } catch { /* ignore */ }
   wins.push(window);
 
   for (const win of wins) {
     if (win.__WUWA_ASSETS_BASE__) return normalizeAssetsBase(win.__WUWA_ASSETS_BASE__);
-  }
-
-  try {
-    if (typeof import.meta !== 'undefined' && import.meta.url && !/^file:/i.test(import.meta.url)) {
-      const moduleHref = new URL(import.meta.url, window.location.href).href;
-      const fromJsDelivr = assetsBaseFromJsDelivrModule(moduleHref);
-      if (fromJsDelivr) return fromJsDelivr;
-      const fromMeta = assetsBaseFromModuleUrl(moduleHref);
-      if (fromMeta) return normalizeAssetsBase(fromMeta);
-    }
-  } catch {
-    /* ignore */
-  }
-
-  const fromPerformance = assetsBaseFromPerformance();
-  if (fromPerformance) return fromPerformance;
-
-  for (const win of wins) {
-    try {
-      for (const script of win.document.querySelectorAll<HTMLScriptElement>('script[src]')) {
-        const src = script.getAttribute('src') ?? '';
-        const fromJsDelivr = assetsBaseFromJsDelivrModule(src);
-        if (fromJsDelivr) return fromJsDelivr;
-        const base = assetsBaseFromScriptSrc(src);
-        if (base) return normalizeAssetsBase(base);
-      }
-    } catch {
-      /* cross-origin */
-    }
   }
 
   return normalizeAssetsBase(WUWA_DEFAULT_CDN_ASSETS_BASE);
