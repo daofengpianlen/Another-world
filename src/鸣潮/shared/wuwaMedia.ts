@@ -234,6 +234,8 @@ export function resolveWuwaMediaUrl(url: string): string {
     const local = toLocalUrl(LOCAL_FILES[file]);
     if (local) return local;
   }
+  // catbox 已不可用，无法映射的 catbox URL / 短文件名不进行任何回退
+  if (file) return '';
 
   if (/^https?:\/\//i.test(trimmed)) return trimmed;
   if (trimmed.startsWith('/')) return trimmed;
@@ -254,7 +256,7 @@ export function resolveWuwaMediaUrl(url: string): string {
     if (local) return local;
   }
 
-  return `${WUWA_MEDIA_BASE_URL}${trimmed.replace(/^\/+/, '')}`;
+  return '';
 }
 
 export function isWuwaVideoUrl(url: string): boolean {
