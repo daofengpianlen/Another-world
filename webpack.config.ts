@@ -555,6 +555,11 @@ function parse_configuration(entry: Entry): (_env: any, argv: any) => webpack.Co
         return callback();
       }
 
+      // pinia 从 CDN 加载时无法被 DefinePlugin 替换 __VUE_PROD_DEVTOOLS__，打包进 bundle
+      if (request === 'pinia') {
+        return callback();
+      }
+
       if (
         ['vue', 'vue-router'].every(key => request !== key) &&
         ['pixi', 'react', 'vue', 'pinia'].some(key => request.includes(key))
