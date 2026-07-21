@@ -47,16 +47,6 @@
 
       <button
         type="button"
-        class="input-bar__btn input-bar__btn--regen"
-        title="重新生成上一段 AI 剧情"
-        :disabled="!can_regenerate || sending"
-        @click="regenerate()"
-      >
-        ↻
-      </button>
-
-      <button
-        type="button"
         class="input-bar__btn input-bar__btn--send"
         :disabled="sending || !can_send"
         @click="submit()"
@@ -93,7 +83,7 @@ defineProps<{ options: WuwaOption[] }>();
 const phone_visible = defineModel<boolean>('phoneVisible', { default: false });
 
 const game = useGameStore();
-const { user_input, sending, can_regenerate, is_streaming } = storeToRefs(game);
+const { user_input, sending, is_streaming } = storeToRefs(game);
 const can_send = computed(() => Boolean(user_input.value.trim()));
 const options_open = ref(false);
 
@@ -111,11 +101,6 @@ async function submit() {
   if (!can_send.value || sending.value) return;
   options_open.value = false;
   await game.submitInput();
-}
-
-async function regenerate() {
-  options_open.value = false;
-  await game.regenerateLastReply();
 }
 </script>
 

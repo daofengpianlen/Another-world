@@ -45,7 +45,7 @@
 
 
 
-      <div class="game-hub__scroll">
+      <div ref="scroll_el" class="game-hub__scroll">
 
         <div v-if="!parsed.gal && !game.is_streaming" class="game-hub__empty">
 
@@ -55,7 +55,7 @@
 
 
 
-        <InnerSegments v-if="parsed.gal" :segments="parsed.gal.segments" />
+        <InnerSegments v-if="parsed.gal" :key="game.message_id" :segments="parsed.gal.segments" />
 
       </div>
 
@@ -137,6 +137,7 @@ const frame_style = computed(() => ({
 
 
 const shell_ref = ref<HTMLElement | null>(null);
+const scroll_el = ref<HTMLElement | null>(null);
 
 const phone_visible = ref(false);
 
@@ -169,6 +170,16 @@ watch([is_fullscreen, is_expanded], ([fs, exp]) => {
     phone_visible.value = false;
   }
 });
+
+// 消息切换时重置滚动位置（翻牌/滑动状态由 :key="game.message_id" 强制重建子组件来重置）
+watch(
+  () => game.parsed.gal,
+  () => {
+    nextTick(() => {
+      if (scroll_el.value) scroll_el.value.scrollTop = 0;
+    });
+  },
+);
 
 </script>
 

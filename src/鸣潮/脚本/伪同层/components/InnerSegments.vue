@@ -15,6 +15,10 @@
       :heart="segment.heart"
       :speech="segment.speech"
     />
+    <UserBubble
+      v-else-if="segment.type === 'user'"
+      :content="segment.content"
+    />
     <div v-else class="wuwa-html-chunk" v-html="segment.content"></div>
   </template>
 </template>
@@ -22,6 +26,7 @@
 <script setup lang="ts">
 import NarrationBlock from './NarrationBlock.vue';
 import OtherBubble from './OtherBubble.vue';
+import UserBubble from './UserBubble.vue';
 import ZCharacterBubble from './ZCharacterBubble.vue';
 import { useHubSettingsStore } from '../hubSettingsStore';
 import type { WuwaInnerSegment } from '../wuwaParser';

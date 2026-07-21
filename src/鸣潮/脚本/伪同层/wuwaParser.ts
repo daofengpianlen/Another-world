@@ -6,8 +6,10 @@ export type WuwaNarrationSegment = { type: 'p'; content: string };
 export type WuwaOtherSegment = { type: 'other'; name: string; heart: string; speech: string };
 export type WuwaMainSegment = { type: 'main'; name: string; pic?: string; speech: string; heart: string };
 export type WuwaGalSegment = { type: 'gal'; segments: WuwaInnerSegment[] };
+/** 用户通过伪同层输入栏发送的消息气泡 */
+export type WuwaUserSegment = { type: 'user'; content: string };
 
-export type WuwaInnerSegment = WuwaHtmlSegment | WuwaNarrationSegment | WuwaOtherSegment | WuwaMainSegment;
+export type WuwaInnerSegment = WuwaHtmlSegment | WuwaNarrationSegment | WuwaOtherSegment | WuwaMainSegment | WuwaUserSegment;
 
 export type WuwaOption = { html: string; text: string };
 
