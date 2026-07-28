@@ -106,6 +106,7 @@ function watch_tavern_helper(compiler: webpack.Compiler) {
   }
 }
 
+<<<<<<< HEAD
 function copy_gal_assets(compiler: webpack.Compiler) {
   const copy = () => {
     const src = path.join(import.meta.dirname, 'src/手机角色状态栏/assets');
@@ -121,6 +122,8 @@ function copy_gal_assets(compiler: webpack.Compiler) {
   compiler.hooks.watchRun.tap('copy_gal_assets', copy);
 }
 
+=======
+>>>>>>> 3ee370304f725ffc74d481bb24331e890bad1641
 let watcher: FSWatcher;
 const dump = () => {
   exec('pnpm dump', { cwd: import.meta.dirname });
@@ -455,7 +458,10 @@ function parse_configuration(entry: Entry): (_env: any, argv: any) => webpack.Co
         { apply: watch_tavern_helper },
         { apply: schema_dump },
         { apply: tavern_sync },
+<<<<<<< HEAD
         { apply: copy_gal_assets },
+=======
+>>>>>>> 3ee370304f725ffc74d481bb24331e890bad1641
         new VueLoaderPlugin(),
         unpluginAutoImport({
           dts: true,
@@ -555,6 +561,7 @@ function parse_configuration(entry: Entry): (_env: any, argv: any) => webpack.Co
         return callback();
       }
 
+<<<<<<< HEAD
       // pinia 从 CDN 加载时无法被 DefinePlugin 替换 __VUE_PROD_DEVTOOLS__，打包进 bundle
       if (request === 'pinia') {
         return callback();
@@ -563,6 +570,11 @@ function parse_configuration(entry: Entry): (_env: any, argv: any) => webpack.Co
       if (
         ['vue', 'vue-router'].every(key => request !== key) &&
         ['pixi', 'react', 'vue', 'pinia'].some(key => request.includes(key))
+=======
+      if (
+        ['vue', 'vue-router'].every(key => request !== key) &&
+        ['pixi', 'react', 'vue'].some(key => request.includes(key))
+>>>>>>> 3ee370304f725ffc74d481bb24331e890bad1641
       ) {
         return callback();
       }
@@ -582,9 +594,23 @@ function parse_configuration(entry: Entry): (_env: any, argv: any) => webpack.Co
       const cdn = {
         sass: 'https://jspm.dev/sass',
       };
+<<<<<<< HEAD
       return callback(
         null,
         'module-import ' + (cdn[request as keyof typeof cdn] ?? `https://testingcf.jsdelivr.net/npm/${request}/+esm`),
+=======
+      const package_json = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, 'package.json'), 'utf-8')) as {
+        dependencies?: Record<string, string>;
+        devDependencies?: Record<string, string>;
+      };
+      const package_versions = { ...package_json.devDependencies, ...package_json.dependencies };
+      const version = package_versions[request]?.replace(/^[~^]/, '');
+      const versioned_request = /^[.\d]+$/.test(version) ? `${request}@${version}` : request;
+      return callback(
+        null,
+        'module-import ' +
+          (cdn[request as keyof typeof cdn] ?? `https://testingcf.jsdelivr.net/npm/${versioned_request}/+esm`),
+>>>>>>> 3ee370304f725ffc74d481bb24331e890bad1641
       );
     },
   });
