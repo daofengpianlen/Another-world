@@ -14,6 +14,7 @@ export type StreamingMessageContext = {
   during_streaming: boolean;
 };
 
+<<<<<<< HEAD
 const MES_TEXT_HIDE_CLASS = 'th-mes-text-hidden';
 
 function ensureMesTextHideStyle() {
@@ -28,6 +29,10 @@ function hideMesText($mes_text: JQuery) {
 
 function showMesText($mes_text: JQuery) {
   $mes_text.removeClass(MES_TEXT_HIDE_CLASS);
+=======
+export function injectStreamingMessageContext(): Readonly<StreamingMessageContext> {
+  return readonly(inject('streaming_message_context')!);
+>>>>>>> ad523eba6d41b01a9154c98517a61825ef3ea546
 }
 
 /**
@@ -88,9 +93,14 @@ export function mountStreamingMessages(
 
     const $message_element = $(`.mes[mesid='${message_id}']`);
 
+<<<<<<< HEAD
     const $mes_text = $message_element.find('.mes_text');
     hideMesText($mes_text);
     $message_element.find('.TH-streaming').addClass(MES_TEXT_HIDE_CLASS);
+=======
+    const $mes_text = $message_element.find('.mes_text').addClass('hidden!');
+    $message_element.find('.TH-streaming').addClass('hidden!');
+>>>>>>> ad523eba6d41b01a9154c98517a61825ef3ea546
 
     let $host = $message_element.find(`#${prefix}-${message_id}`);
     if ($host.length > 0) {
@@ -142,12 +152,21 @@ export function mountStreamingMessages(
     const observer = new MutationObserver(() => {
       const $edit_textarea = $('#chat').find('#curEditTextarea');
       if ($edit_textarea.parent().is($mes_text)) {
+<<<<<<< HEAD
         showMesText($mes_text);
         $host.addClass(MES_TEXT_HIDE_CLASS);
       } else if ($edit_textarea.length === 0) {
         hideMesText($mes_text);
         $message_element.find('.TH-streaming').addClass(MES_TEXT_HIDE_CLASS);
         $host.removeClass(MES_TEXT_HIDE_CLASS);
+=======
+        $mes_text.removeClass('hidden!');
+        $host.addClass('hidden!');
+      } else if ($edit_textarea.length === 0) {
+        $mes_text.addClass('hidden!');
+        $message_element.find('.TH-streaming').addClass('hidden!');
+        $host.removeClass('hidden!');
+>>>>>>> ad523eba6d41b01a9154c98517a61825ef3ea546
       }
     });
     observer.observe($mes_text[0] as HTMLElement, { childList: true });
@@ -158,9 +177,15 @@ export function mountStreamingMessages(
       destroy: () => {
         const $th_streaming = $message_element.find('.TH-streaming');
         if ($th_streaming.length > 0) {
+<<<<<<< HEAD
           $th_streaming.removeClass(MES_TEXT_HIDE_CLASS);
         } else {
           showMesText($mes_text);
+=======
+          $th_streaming.removeClass('hidden!');
+        } else {
+          $mes_text.removeClass('hidden!');
+>>>>>>> ad523eba6d41b01a9154c98517a61825ef3ea546
         }
 
         app.unmount();
@@ -238,9 +263,15 @@ export function mountStreamingMessages(
     unmount: () => {
       const $th_streaming = $('#chat').find('.TH-streaming');
       if ($th_streaming.length > 0) {
+<<<<<<< HEAD
         $th_streaming.removeClass(MES_TEXT_HIDE_CLASS);
       } else {
         $('#chat').find('.mes_text').removeClass(MES_TEXT_HIDE_CLASS);
+=======
+        $th_streaming.removeClass('hidden!');
+      } else {
+        $('chat').find('.mes_text').removeClass('hidden!');
+>>>>>>> ad523eba6d41b01a9154c98517a61825ef3ea546
       }
       states.forEach(({ destroy }) => destroy());
       stop_list.forEach(stop => stop());
