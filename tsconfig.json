@@ -11,8 +11,13 @@
     ],
     "target": "ESNext",
     "module": "ESNext",
+<<<<<<< HEAD
     "outDir": "dist",
     "baseUrl": ".",
+=======
+    "rootDir": ".",
+    "outDir": "dist",
+>>>>>>> d77edb7121650f80c9a1a62357d549925d1336ad
     "paths": {
       "@util/*": [
         "./util/*"
@@ -36,7 +41,10 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
+<<<<<<< HEAD
     "resolveJsonModule": true,
+=======
+>>>>>>> d77edb7121650f80c9a1a62357d549925d1336ad
     "forceConsistentCasingInFileNames": true
   },
   "include": [
