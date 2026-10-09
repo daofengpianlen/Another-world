@@ -52,13 +52,9 @@
       "properties": {
         "是否是漂泊者": {
           "default": true,
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
+          "type": [
+            "boolean",
+            "string"
           ]
         },
         "性别": {
@@ -120,13 +116,9 @@
       "properties": {
         "是否存在": {
           "default": false,
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
+          "type": [
+            "boolean",
+            "string"
           ]
         },
         "性别": {
@@ -167,13 +159,9 @@
               },
               "是否为处女": {
                 "default": true,
-                "anyOf": [
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "type": "string"
-                  }
+                "type": [
+                  "boolean",
+                  "string"
                 ]
               }
             }
@@ -264,13 +252,9 @@
               },
               "是否怀孕": {
                 "default": false,
-                "anyOf": [
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "type": "string"
-                  }
+                "type": [
+                  "boolean",
+                  "string"
                 ]
               }
             }
@@ -424,13 +408,9 @@
         },
         "isPostScript": {
           "default": false,
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
+          "type": [
+            "boolean",
+            "string"
           ]
         },
         "_anchorVer": {
@@ -458,16 +438,10 @@
   "$defs": {
     "__schema0": {
       "default": "false",
-      "anyOf": [
-        {
-          "type": "boolean"
-        },
-        {
-          "type": "string"
-        },
-        {
-          "type": "number"
-        }
+      "type": [
+        "boolean",
+        "string",
+        "number"
       ]
     },
     "__schema1": {
@@ -498,13 +472,9 @@
       "properties": {
         "是否正在性爱": {
           "default": false,
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "string"
-            }
+          "type": [
+            "boolean",
+            "string"
           ]
         },
         "高潮进度": {
